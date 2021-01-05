@@ -7,6 +7,8 @@ start of HPC main project
 
 - Scatter + Gather
 - Scatter + Reduce
+- Send + Recv (blockierend) + mit Status + Probe
+- Send + Recv (nicht blockierend) + mit Status + Probe
 
 ## Generelles
 
