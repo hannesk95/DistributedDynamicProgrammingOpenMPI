@@ -16,4 +16,10 @@ start of HPC main project
 ## Generelles
 
 - sample code vom Martin zum Laufen bringen
-- Numpy Arrays direkt in C++ einlesen
+- Numpy Arrays direkt in C++ einlesen - <a href="https://github.com/rogersce/cnpy" target="_blank">`cnpy by Carl Rogers`</a> -> Beispiel unter <a href="data_import/main.cpp" target="_blank">`main.cpp`</a>
+- pickle direkt in C++ einlesen
+
+# Implementiertes
+
+- <a href="data/" target="_blank">`data`</a>
+- <a href="data_import/" target="_blank">`data_import`</a>
