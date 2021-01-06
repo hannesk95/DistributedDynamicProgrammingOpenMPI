@@ -1,0 +1,11 @@
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /mnt/d/git_projects/hpc_basic/data_import
+-- A library with LAPACK API found.
+-- A cache variable, namely LAPACKE_DIR, has been set to specify the install directory of LAPACKE
+-- Looking for LAPACKE_dgeqrf
+-- Looking for LAPACKE_dgeqrf - not found
+-- Looking for lapacke : test with lapack fails
+-- Looking for LAPACKE_dgeqrf
+-- Looking for LAPACKE_dgeqrf - found
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /mnt/d/git_projects/hpc_basic/data_import/cmake-build-debug

@@ -1,0 +1,5 @@
+/mnt/d/git_projects/hpc_basic/data_import/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/d/git_projects/hpc_basic/data_import/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/d/git_projects/hpc_basic/data_import/cmake-build-debug/CMakeFiles/data_import.dir
+/mnt/d/git_projects/hpc_basic/data_import/cmake-build-debug/lib/CMakeFiles/rebuild_cache.dir
+/mnt/d/git_projects/hpc_basic/data_import/cmake-build-debug/lib/CMakeFiles/edit_cache.dir
