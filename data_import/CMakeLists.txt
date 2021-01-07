@@ -16,6 +16,9 @@ set(CMAKE_CXX_STANDARD 11)
 # -fopenmp:      activate openmp support (next lecture), might be enabled by default depending on your compiler
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -ffast-math -fopenmp")
 
+# The name for this library, let's be super creative and call it 'backend'
+set(LIB_NAME backend)
+
 # The name for the c++ test program (mainly for debugging with an IDE, the debugger needs an entry point to the library)
 project(data_import)
 
@@ -38,4 +41,4 @@ set(SRC_FILES main.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 # linking cnpy and z library
-target_link_libraries(${PROJECT_NAME} cnpy z)
+target_link_libraries(${PROJECT_NAME} cnpy z ${LIB_NAME})

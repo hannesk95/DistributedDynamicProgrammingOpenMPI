@@ -44,6 +44,12 @@ find_package(LAPACK REQUIRED)
 # Pay attention to the E in the end.
 find_package(LAPACKE REQUIRED)
 
+# Collect all source files for easy compilation
+set(SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/src/Async_VI.cpp)
+
+# The complete include folder, which is required for cffi to use the Interface.h
+set(INC_DIR ${CMAKE_CURRENT_LIST_DIR}/inc)
+
 # Add additional include directories for the backend:
 # - eveything in our directory 'inc'
 # - lib/ directory itself for sake of completeness (if we decide to place a header next to the CMakeLists.txt)
@@ -56,3 +62,35 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}
 # Tell cmake where additional link directories are located
 # We do not need this here, because the Find??? cmake files for LAPACK etc. already do this
 #link_directories(${LAPACKE_LIBRARY_DIRS_DEP}) # link directories of lapacke + dependencies
+
+# This puts the code together into the library
+add_library(${LIB_NAME} SHARED ${SRC_FILES})
+
+# To check if LAPACKE LIBS with DEP suffix already include BLAS and normal LAPACK:
+# message("LAPACKE_LIBRARIES_DEP: ${LAPACKE_LIBRARIES_DEP}")
+# message("BLAS_LIBRARIES: ${BLAS_LIBRARIES}")
+# message("LAPACK_LIBRARIES: ${LAPACK_LIBRARIES}")
+#
+# Result is something like:
+# LAPACKE_LIBRARIES_DEP: /usr/lib/x86_64-linux-gnu/liblapacke.so;/usr/lib/x86_64-linux-gnu/libopenblas.so;/usr/lib/x86_64-linux-gnu/libopenblas.so;-lm
+# BLAS_LIBRARIES: /usr/lib/x86_64-linux-gnu/libopenblas.so
+# LAPACK_LIBRARIES: /usr/lib/x86_64-linux-gnu/libopenblas.so;/usr/lib/x86_64-linux-gnu/libopenblas.so
+# For some reason LAPACK_LIBRARIES includes it twice
+#
+# Conclusion: LAPACKE_LIBRARIES_DEP is enough, everything is included
+target_link_libraries(${LIB_NAME} OpenMP::OpenMP_CXX ${LAPACKE_LIBRARIES_DEP})
+
+# Create 'make install' instruction to move required files in the python 'backend' folder
+# We can use variables from the top level cmake file: DEST_INC and DEST_LIB are defined
+
+if(WIN32)
+  # Visual Studio does not like these instructions and spams error messages, hence this if else construction
+  # Even if compilation does not work with this cmake file under windows you can still use Visual Studio
+  # and its code completion. (I'm using the full 2017 Enterprise Version, not VS Code)
+  message("No install step for windows!")
+
+else()
+
+  # Install target for the actual libary as before
+  install(TARGETS ${LIB_NAME} LIBRARY DESTINATION ${DEST_LIB} CONFIGURATIONS Release)
+endif()
