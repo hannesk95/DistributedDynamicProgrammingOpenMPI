@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -L/mnt/d/git_projects/hpc_basic/data_import/lib/inc/cnpy -g   CMakeFiles/data_import.dir/main.cpp.o  -o data_import  -lcnpy -lz 
