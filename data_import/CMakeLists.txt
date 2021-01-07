@@ -5,7 +5,6 @@ cmake_minimum_required (VERSION 3.10)
 
 # Compiler flags for all configuration, -Wall enables all warnings
 set(CMAKE_CXX_FLAGS "-Wall -L${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy")
-set(CMAKE_CXX_STANDARD 11)
 
 # Flags for release configuration: 
 # -O3:           level 3 compiler optimizations => faster code
@@ -15,6 +14,8 @@ set(CMAKE_CXX_STANDARD 11)
 #                allow fast math => faster code
 # -fopenmp:      activate openmp support (next lecture), might be enabled by default depending on your compiler
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -ffast-math -fopenmp")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # The name for this library, let's be super creative and call it 'backend'
 set(LIB_NAME backend)
@@ -34,6 +35,12 @@ add_subdirectory(lib)
 # Avoid annoying paths in main.cpp by providing the additional include directories
 include_directories(lib/inc)
 
+# We need the MPI Package, it is installed in a way that you can find it via CMake
+find_package(MPI REQUIRED)
+
+# Add the includes for MPI
+include_directories(${MPI_INCLUDE_PATH})
+
 # All additional source files for debugging, e.g. if the debugging code is located in different files
 set(SRC_FILES main.cpp)
 
@@ -41,4 +48,4 @@ set(SRC_FILES main.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 # linking cnpy and z library
-target_link_libraries(${PROJECT_NAME} cnpy z ${LIB_NAME})
+target_link_libraries(${PROJECT_NAME} cnpy z ${LIB_NAME} ${MPI_LIBRARIES} -lpthread)
