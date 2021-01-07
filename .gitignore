@@ -33,5 +33,5 @@
 
 # Clion and build shit
 .idea
-cmake_build_debug
+cmake-build-debug
 build
