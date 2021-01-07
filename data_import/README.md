@@ -37,6 +37,7 @@ Given functionality:
 - hard coded initialization of `values`, `row_pointer`, `rows`, `rshape`, `PI_star`
 - import of all those parameters via <a href="https://github.com/rogersce/cnpy" target="_blank">`cnpy by Carl Rogers`</a>
 - compares respective parameters if import worked correctly
+- has `Alex'` version of asynchronous value iteration implemented (acutal implementation in <a href="lib/inc/Async_VI.h" target="_blank">`inc/`</a> and <a href="lib/src/Async_VI.cpp" target="_blank">`src/`</a>) to check whether everything else works. Has to be changed!
 
 <br/><br/>
 
