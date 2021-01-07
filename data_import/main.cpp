@@ -4,13 +4,8 @@
 #include <iostream> // for print statements
 #include <vector> // for vector operations
 #include <numeric> // to calculate the difference of two vectors
-#include "Eigen/Sparse"
-#include "Eigen/Dense"
 #include "cnpy/cnpy.h"
-
-// typedef's to save some time while coding
-typedef Eigen::SparseMatrix<double, Eigen::RowMajor> SpMat;
-typedef Eigen::VectorXd vec; // Standard Vector
+#include "Async_VI.h" // for Asnyc value iteration
 
 int main(int argc, char *argv[])
 {
@@ -87,7 +82,10 @@ int main(int argc, char *argv[])
     // init SparseMatrix, check whether it works
     Eigen::Map<SpMat> probabilities2_map(shape[0], shape[1], data.size(), indptr.data(), indices.data(), data.data());
 
+    //
     // check whether all values are parsed correctly
+    //
+    
     std::vector<double> ndices;
     std::vector<double> ndptr;
     std::vector<double> ata;
@@ -106,5 +104,28 @@ int main(int argc, char *argv[])
     std::cout << "Difference between original shape and inread ones: " << std::accumulate(hape.begin(), hape.end(), 0) << std::endl;
     std::cout << "Difference between original pi_star and inread ones: " << std::accumulate(i_star.begin(), i_star.end(), 0) << std::endl;
 
+    //
+    // now test the async value iteration
+    //
+
+    // init number of stars, states and actions
+    const unsigned int n_stars = 5;
+    const unsigned int nS = 125;
+    const unsigned int nA = 4;
+    // init value and policy
+    std::vector<double> v;
+    std::vector<double> pi;
+    // fill
+    for (int i=0; i < 125; i++)
+    {
+        v.push_back(0);
+        pi.push_back(0);
+    }
+    // run asynchronous value iteration
+    Backend::async_vi(v.data(), pi.data(), data.data(), indices.data(), indptr.data(), values.size(), shape[1], shape[0], n_stars, nS, nA);
+    std::vector<double> result;
+    // calc "difference" vector, print sum of "difference" vector
+    std::transform(pi.begin(),pi.end(),pi_star.begin(),std::back_inserter(result),std::minus<double>());
+    std::cout << "Difference between ground truth and calculated policy is " << std::accumulate(result.begin(), result.end(), 0);
     return 0;
 }
