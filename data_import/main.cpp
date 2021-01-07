@@ -6,9 +6,14 @@
 #include <numeric> // to calculate the difference of two vectors
 #include "cnpy/cnpy.h"
 #include "Async_VI.h" // for Asnyc value iteration
+#include <mpi.h>
 
 int main(int argc, char *argv[])
 {
+    // Initialize the MPI environment. The two arguments to MPI Init are not
+    // currently used by MPI implementations, but are there in case future
+    // implementations might need the arguments.
+    MPI_Init(&argc, &argv);
     // original values of probability matrix
     std::vector<double> values({1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. , 1. ,
                                 0.5, 0.5, 1. , 1. , 0.5, 0.5, 1. , 1. , 1. , 0.5, 0.5, 1. , 1. , 0.5, 0.5, 1. , 1. , 1. , 0.5, 0.5, 1. , 1. , 0.5, 0.5, 1. , 1. ,
@@ -127,5 +132,9 @@ int main(int argc, char *argv[])
     // calc "difference" vector, print sum of "difference" vector
     std::transform(pi.begin(),pi.end(),pi_star.begin(),std::back_inserter(result),std::minus<double>());
     std::cout << "Difference between ground truth and calculated policy is " << std::accumulate(result.begin(), result.end(), 0);
+
+    // Finalize the MPI environment. No more MPI calls can be made after this
+    MPI_Finalize();
+
     return 0;
 }
