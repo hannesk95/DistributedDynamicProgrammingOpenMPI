@@ -16,7 +16,15 @@ contains all `cmake` files to find used libraries (`C++` libraries like `LAPACKE
 
 ## <a href='inc/' target='_blank'>`inc/`</a>
 
-contains all `include` files (Header) for project. Probably needs a change for other tasks, depending on the needed `C++` libraries
+contains all `include` files (Header) for project
+
+<br/><br/>
+
+-------
+
+## <a href='src/' target='_blank'>`src/`</a>
+
+contains all `src` files for project
 
 <br/><br/>
 
