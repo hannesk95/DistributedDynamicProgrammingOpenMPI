@@ -6,6 +6,14 @@ mini dataset, for debugging purposes only
 
 -------
 
+## <a href='convert_pickle.py' target='_blank'>`convert_pickle.py`</a>
+
+converts the relevant information of <a href='parameters.pickle' target='_blank'>`parameters.pickle`</a> into `.npy`-format. Result is <a href='parameters.npy' target='_blank'>`parameters.npy`</a>. Gets called by <a href='../../data_import/Makefile' target='_blank'>`Makefile`</a>
+
+<br/><br/>
+
+-------
+
 ## <a href='J_star_alpha_0_99_iter_1000.npy' target='_blank'>`J_star_alpha_0_99_iter_1000.npy`</a>
 
 `J_star` (= values) to verify correctness of `Async_VI`
@@ -41,6 +49,14 @@ mini dataset, for debugging purposes only
 ## <a href='P_shape.npy' target='_blank'>`P_shape.npy`</a>
 
 `shape` for `probability` matrix
+
+<br/><br/>
+
+-------
+
+## <a href='parameters.npy' target='_blank'>`parameters.npy`</a>
+
+`parameters` in `.npy`-format. Content is equivalent as <a href='parameters.pickle' target='_blank'>`parameters.pickle`</a>. However only variables `number_stars`, `max_controls`, `NS`
 
 <br/><br/>
 
