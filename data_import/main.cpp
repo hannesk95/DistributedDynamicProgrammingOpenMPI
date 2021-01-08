@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
     cnpy::NpyArray raw_data = cnpy::npy_load("../../data/data_debug/P_data.npy");
     cnpy::NpyArray raw_shape = cnpy::npy_load("../../data/data_debug/P_shape.npy");
     cnpy::NpyArray raw_pistar = cnpy::npy_load("../../data/data_debug/pi_star_alpha_0_99_iter_1000.npy");
+    cnpy::NpyArray raw_parameters = cnpy::npy_load("../../data/data_debug/parameters.npy");
 
     // convert the content
     std::vector<int> indptr = raw_indptr.as_vec<int>();
@@ -83,6 +84,12 @@ int main(int argc, char *argv[])
     std::vector<double> data(data_float.begin(), data_float.end());
     std::vector<int64_t> shape = raw_shape.as_vec<int64_t>();
     std::vector<int> pi_star = raw_pistar.as_vec<int>();
+    std::vector<int> parameters = raw_parameters.as_vec<int>();
+
+    // get number of stars, states and actions
+    const unsigned int n_stars = parameters[0];
+    const unsigned int nA = parameters[1];
+    const unsigned int nS = parameters[2];
 
     // init SparseMatrix, check whether it works
     Eigen::Map<SpMat> probabilities2_map(shape[0], shape[1], data.size(), indptr.data(), indices.data(), data.data());
@@ -113,10 +120,6 @@ int main(int argc, char *argv[])
     // now test the async value iteration
     //
 
-    // init number of stars, states and actions
-    const unsigned int n_stars = 5;
-    const unsigned int nS = 125;
-    const unsigned int nA = 4;
     // init value and policy
     std::vector<double> v;
     std::vector<double> pi;
