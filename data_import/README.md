@@ -53,3 +53,4 @@ Given functionality:
 - `remove_build_directories` - removes all build folders and files [`build/`, `debug/`, `release/` and `CMakeLists.txt.user`]
 - `remove_vs_folder` - removes Visual Studio folder [`.vs/`]
 - `make compile` - deletes old build directories and recompiles full project. Builds `build/` folder, runs `cmake`, `make` and `make install` in there
+- `convert_pickle` - makes sure that <a href='../data/data_debug/parameters.pickle' target='_blank'>`parameters.pickle`</a> is converted to <a href='../data/data_debug/parameters.npy' target='_blank'>`parameters.npy`</a>
