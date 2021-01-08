@@ -6,6 +6,7 @@ Gruppen Mitglieder:
 - Stümke, Daniel: 			daniel.stuemke@tum.de
 - Christoph, Alexander:     alexander.christoph@tum.de
 - Kiechle, Johannes: 		johannes.kiechle@tum.de
+- Mustermann, Max:
 
 # To Do's
 
