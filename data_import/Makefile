@@ -20,8 +20,11 @@ remove_vs_folder:
 	rm -rf .vs/
 
 # Get rid of everything that might be left for whatever reason, then compile from scratch
-compile: remove_build_directories
+compile: remove_build_directories convert_pickle
 	mkdir -p build/
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
-	$(MAKE) -C build/ install
+
+# makes sure that "parameters.pickle" is converted to "parameters.npy"
+convert_pickle:
+	cd ../data/data_debug/ && python3 convert_pickle.py
