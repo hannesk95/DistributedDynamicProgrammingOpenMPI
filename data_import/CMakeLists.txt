@@ -16,6 +16,8 @@ set(CMAKE_CXX_FLAGS "-Wall -L${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -ffast-math -fopenmp")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_INSTALL_RPATH ${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy/)
+#set(DEST_INC ${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy/)
 
 # The name for this library, let's be super creative and call it 'backend'
 set(LIB_NAME backend)
@@ -48,4 +50,6 @@ set(SRC_FILES main.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 # linking cnpy and z library
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy")
 target_link_libraries(${PROJECT_NAME} cnpy z ${LIB_NAME} ${MPI_LIBRARIES} -lpthread)
+
