@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
     cnpy::NpyArray raw_shape = cnpy::npy_load("../../data/data_debug/P_shape.npy");
     cnpy::NpyArray raw_pistar = cnpy::npy_load("../../data/data_debug/pi_star_alpha_0_99_iter_1000.npy");
     cnpy::NpyArray raw_parameters = cnpy::npy_load("../../data/data_debug/parameters.npy");
+    
 
     // convert the content
     std::vector<int> indptr = raw_indptr.as_vec<int>();
