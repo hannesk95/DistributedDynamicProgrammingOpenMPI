@@ -55,4 +55,3 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 # linking cnpy and z library
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy")
 target_link_libraries(${PROJECT_NAME} cnpy z ${LIB_NAME} ${MPI_LIBRARIES} -lpthread)
-
