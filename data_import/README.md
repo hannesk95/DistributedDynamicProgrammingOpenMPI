@@ -54,3 +54,6 @@ Given functionality:
 - `remove_vs_folder` - removes Visual Studio folder [`.vs/`]
 - `make compile` - deletes old build directories and recompiles full project. Builds `build/` folder, runs `cmake`, `make` and `make install` in there
 - `convert_pickle` - makes sure that <a href='../data/data_debug/parameters.pickle' target='_blank'>`parameters.pickle`</a> is converted to <a href='../data/data_debug/parameters.npy' target='_blank'>`parameters.npy`</a>
+- `pack` - packs <a href="../data/" target="_blank">`data/`</a> and <a href="../data_import/" target="_blank">`data_import/`</a> into `gruppe1.tar.gz` (in <a href="../" target="_blank">`parent folder`</a>) after deleting the old `gruppe1.tar.gz`
+- `unpack` - unpacks `grupp1.tar.gz` on Eikon Computer (or anywhere else)
+- `send` - sends `gruppe1.tar.gz` onto selected host (in <a href="Makefile" target="_blank">`Makefile`</a>, currently `hpc08`)

@@ -6,9 +6,15 @@ Gruppen Mitglieder:
 - Stümke, Daniel: 			daniel.stuemke@tum.de
 - Christoph, Alexander:     alexander.christoph@tum.de
 - Kiechle, Johannes: 		johannes.kiechle@tum.de
-- Mustermann, Max:
 
 # To Do's
+
+## Dienstag 12.01
+
+- einigen auf eine Async_VI Implementierung (preferable Daniels)
+- Ordnerstruktur absprechen
+- Absprache wer welches Kommunikationsprotokoll testet
+- Rücksprache GIT
 
 ## Kommmunikationsprotokolle zu evaluieren:
 
