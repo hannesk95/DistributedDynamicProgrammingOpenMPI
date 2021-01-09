@@ -4,7 +4,7 @@
 cmake_minimum_required (VERSION 3.10)
 
 # Compiler flags for all configuration, -Wall enables all warnings
-set(CMAKE_CXX_FLAGS "-Wall -L${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy")
+# set(CMAKE_CXX_FLAGS "-Wall -L${CMAKE_CURRENT_LIST_DIR}/lib/inc/cnpy")
 
 # Flags for release configuration: 
 # -O3:           level 3 compiler optimizations => faster code
@@ -42,6 +42,9 @@ find_package(MPI REQUIRED)
 
 # Add the includes for MPI
 include_directories(${MPI_INCLUDE_PATH})
+
+# Add path to library directory of cnpy
+link_directories(lib/inc/cnpy)
 
 # All additional source files for debugging, e.g. if the debugging code is located in different files
 set(SRC_FILES main.cpp)
