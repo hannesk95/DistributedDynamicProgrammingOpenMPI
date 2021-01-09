@@ -3,8 +3,6 @@
 #include <memory>
 #include <mpi.h>
 
-#include "cnpy.h"
-
 #include "vi_processor_impl_local.h"
 #include "vi_processor_impl_distr_01.h"
 
@@ -56,34 +54,6 @@ int main(int argc, char *argv[])
         Eigen::VectorXf t_mean =  measurements.colwise().mean();
         std::cout << t_mean << std::endl;
     }
-
-    // VI_Processor_Impl_Distr_01 proc(args);
-
-    // auto t0 = std::chrono::system_clock::now();
-    // proc.Process();
-    // auto t1 = std::chrono::system_clock::now();
-
-    
-    // if(proc.HasResult()) {
-    //     std::cout
-    //         << "Processing took "
-    //         << std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count()
-    //         << " micro seconds" << std::endl;
-
-
-    //     std::unique_ptr<Eigen::VectorXi> Pi;
-    //     std::unique_ptr<Eigen::VectorXf> J;
-
-    //     proc.GetPiAndJ(Pi, J);
-
-    //     std::cout << "J:" << std::endl;
-    //     std::cout << *(J.get()) << std::endl;
-        
-    //     std::cout << "Pi:" << std::endl;
-    //     std::cout << *(Pi.get()) << std::endl;
-    // }
-
-
 
     MPI_Finalize();
 }
