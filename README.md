@@ -7,3 +7,11 @@ Group members:
 - Christoph, Alexander:     alexander.christoph@tum.de
 - Kiechle, Johannes: 		johannes.kiechle@tum.de
 
+# Daniels Branch
+
+Wir können hier verschiedene VI Implementierungen und Kommunikationsstrategien ausprobieren indem einfach eine von `VI_Processor_Base` abgeleitete Klasse implementiert wird (siehe als Beispiel `VI_Processor_Impl_Local` oder `VI_Processor_Impl_Distr_01`). 
+
+# Idee zur Evaluation verschiedener Implementierungen
+
+Wenn mehrere Implementierungen verglichen werden sollen können wir in der `main` Funktion eine Liste erstellen welche mehrere Konkrete Implementierungen enthält. Dann Messen wir iterativ für jede Implementierung die Berechnungszeit (jeweils ~20 mal) und vergleichen die mittlere Ausführungsdauer und deren Standardabweichung.
+
