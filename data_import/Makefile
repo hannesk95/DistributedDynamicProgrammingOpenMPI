@@ -27,7 +27,6 @@ compile: remove_build_directories convert_pickle
 	mkdir -p build/
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
-	$(MAKE) -C build/ install
 
 # makes sure that "parameters.pickle" is converted to "parameters.npy"
 convert_pickle:
@@ -41,7 +40,6 @@ unpack:
 	mkdir $(TARNAME)
 	tar -zxvf $(TARNAME).tar.gz -C $(TARNAME)
 	rm Makefile $(TARNAME).tar.gz
-	cd $(TARNAME)
 
 send: pack
 	scp ../$(TARNAME).tar.gz $(HOST):~/lrz-nashome/
