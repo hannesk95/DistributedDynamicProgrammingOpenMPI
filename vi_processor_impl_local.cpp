@@ -1,5 +1,5 @@
 #include "vi_processor_impl_local.h"
-
+#include <mpi.h>
 #include <limits>
 
 void VI_Processor_Impl_Local::value_iteration_impl(
@@ -90,5 +90,9 @@ void VI_Processor_Impl_Local::value_iteration_impl(
 
 bool VI_Processor_Impl_Local::HasResult() 
 {
-    return true;
+    // Actually all Processor have result but we will only use one
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
+
+    return 0 == world_rank;
 }

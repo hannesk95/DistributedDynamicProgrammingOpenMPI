@@ -114,6 +114,7 @@ class VI_Processor_Base {
     ///
     void Process(const unsigned int T = 10e6)
     {
+        J.get()->fill(0.0);
         value_iteration_impl(*Pi.get(), *J.get(), *P.get(), u_max, s_max, f_max, T);
     }
 
