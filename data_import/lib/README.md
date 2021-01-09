@@ -48,4 +48,5 @@ Makefile for this folder
 Given functionality:
 - `make clean` - cleans project folder by removing build folders and Visual Studio folder [`.vs/`]
 - `remove_build_directories` - removes all build folders [`build/` and `install/`]
+- `remove_backend` - remove compiled <a href="inc/backend/" target="_blank">`backend library`</a>
 - `make compile` - deletes old build directories and recompiles full project. Builds `build/` folder, runs `cmake`, `make` and `make install` in there

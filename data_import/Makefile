@@ -1,3 +1,6 @@
+TARNAME = gruppe1
+HOST = hpc08
+
 all:
 	@echo "This is a dummy to prevent running make without explicit target!"
 
@@ -28,3 +31,19 @@ compile: remove_build_directories convert_pickle
 # makes sure that "parameters.pickle" is converted to "parameters.npy"
 convert_pickle:
 	cd ../data/data_debug/ && python3 convert_pickle.py
+
+pack: clean
+	rm -f ../$(TARNAME).tar.gz
+	cd .. && tar -czf $(TARNAME).tar.gz data_import/ data/
+
+unpack:
+	mkdir $(TARNAME)
+	tar -zxvf $(TARNAME).tar.gz -C $(TARNAME)
+	rm Makefile $(TARNAME).tar.gz
+
+send: pack
+	scp ../$(TARNAME).tar.gz $(HOST):~/lrz-nashome/
+	
+
+# to extract Makefile to be able to unpack files
+# tar -zxvf ($TARNAME).tar.gz data_import/Makefile --strip-components 1
