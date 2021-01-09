@@ -10,7 +10,7 @@ if(NOT DEFINED LIB_NAME)
   set(DEST_LIB "${PROJECT_SOURCE_DIR}/install/lib")
   set(DEST_INC "${PROJECT_SOURCE_DIR}/install/")  
 endif()
-
+  
 # A the static / shared library for the Python Code
 #
 # Do not use this CMakeLists.txt directly, work with the file in the parent directory
@@ -83,14 +83,14 @@ target_link_libraries(${LIB_NAME} OpenMP::OpenMP_CXX ${LAPACKE_LIBRARIES_DEP})
 # Create 'make install' instruction to move required files in the python 'backend' folder
 # We can use variables from the top level cmake file: DEST_INC and DEST_LIB are defined
 
-if(WIN32)
+#if(WIN32)
   # Visual Studio does not like these instructions and spams error messages, hence this if else construction
   # Even if compilation does not work with this cmake file under windows you can still use Visual Studio
   # and its code completion. (I'm using the full 2017 Enterprise Version, not VS Code)
-  message("No install step for windows!")
+  # message("No install step for windows!")
 
-else()
+#else()
 
   # Install target for the actual libary as before
-  install(TARGETS ${LIB_NAME} LIBRARY DESTINATION ${DEST_LIB} CONFIGURATIONS Release)
-endif()
+  # install(TARGETS ${LIB_NAME} LIBRARY DESTINATION ${DEST_LIB} CONFIGURATIONS Release)
+#endif()
