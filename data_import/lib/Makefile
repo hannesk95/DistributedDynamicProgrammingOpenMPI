@@ -7,8 +7,11 @@ clean: remove_build_directories
 	rm -rf .vs/
 
 # build and install appears if the inner CMakeLists.txt is used directly
-remove_build_directories:
+remove_build_directories: remove_backend
 	rm -rf build/ install/
+
+remove_backend:
+	rm -rf inc/backend
 
 # Get rid of everything that might be left for whatever reason, then compile from scratch
 compile: remove_build_directories
