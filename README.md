@@ -19,3 +19,18 @@ Die Daten werden im Numpy Format eingelesen. Dafür müssen die `parameters.pick
 
 Wenn mehrere Implementierungen verglichen werden sollen können wir in der `main` Funktion eine Liste erstellen welche mehrere Konkrete Implementierungen enthält. Dann Messen wir iterativ für jede Implementierung die Berechnungszeit (jeweils ~20 mal) und vergleichen die mittlere Ausführungsdauer und deren Standardabweichung.
 
+# Programm ausführen
+
+Meldet euch über ssh auf `hpc05` an. Wechselt ins lrz Verzeichniss `~/lrz-nashome`. Clont das Repository und wechselt in diesen Branch `git checkout daniel`.
+Dann wie gewohnt `mkdir build`, `cd build`, `cmake ..` und `make` ausführen. 
+
+Überprüft das die `~/.ssh/config` richtig ist:
+``
+Host *
+        User DeinUserName
+        ForwardX11 yes
+        Compression yes
+``
+
+Jetzt sollte man im `build` Ordner das Programm einfach via `mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe` starten können.
+
