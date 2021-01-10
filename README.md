@@ -25,12 +25,12 @@ Meldet euch über ssh auf `hpc05` an. Wechselt ins lrz Verzeichniss `~/lrz-nasho
 Dann wie gewohnt `mkdir build`, `cd build`, `cmake ..` und `make` ausführen. 
 
 Überprüft das die `~/.ssh/config` richtig ist:
-``
+```text
 Host *
         User DeinUserName
         ForwardX11 yes
         Compression yes
-``
+```
 
 Jetzt sollte man im `build` Ordner das Programm einfach via `mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe` starten können.
 
