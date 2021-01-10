@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     };
 
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
-    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args)));
+    for(const int& comm_period : {10,50,100,500})
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, comm_period)));
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args)));
 
     const int n_runs = 20;
