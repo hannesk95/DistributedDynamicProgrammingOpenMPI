@@ -59,13 +59,13 @@ class VI_Processor_Base {
     const float e_max;
     
 
-    void debug_message(std::string msg)
+    void debug_message(std::string msg, const int root_id = 0)
     {
         
         #ifdef VI_PROCESSOR_DEBUG
         int world_rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-        if(0 == world_rank)
+        if(root_id == world_rank)
         {
             std::cout << "[" << typeid(*this).name() << "]: " << msg << std::endl;
         }
@@ -90,7 +90,7 @@ class VI_Processor_Base {
 
     public:
 
-    VI_Processor_Base(const vi_processor_args_t& args, const float _alpha = 0.99, const float _e_max = 10e-12)
+    VI_Processor_Base(const vi_processor_args_t& args, const float _alpha = 0.99, const float _e_max = 1e-11)
         : alpha(_alpha), e_max(_e_max)
     {
         // Load Parameters
