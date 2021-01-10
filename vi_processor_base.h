@@ -141,8 +141,11 @@ class VI_Processor_Base {
 
         value_iteration_impl(*Pi.get(), *J.get(), *P.get(), u_max, s_max, f_max, T);
 
-        Pi_out.insert(Pi_out.end(), Pi.get()->data(), Pi.get()->data() + Pi.get()->size());
-        J_out.insert(J_out.end(), J.get()->data(), J.get()->data() + J.get()->size());
+        Pi_out.resize(Pi.get()->size());
+        J_out.resize(J.get()->size());
+
+        Pi_out.insert(Pi_out.begin(), Pi.get()->data(), Pi.get()->data() + Pi.get()->size());
+        J_out.insert(J_out.begin(), J.get()->data(), J.get()->data() + J.get()->size());
     }
 
 };
