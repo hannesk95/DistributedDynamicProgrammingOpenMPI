@@ -1,5 +1,4 @@
 #include "vi_processor_impl_local.h"
-#include <mpi.h>
 #include <limits>
 
 void VI_Processor_Impl_Local::value_iteration_impl(
@@ -83,7 +82,11 @@ void VI_Processor_Impl_Local::value_iteration_impl(
             J[s] = g_min;
         }
 
-        if(error <= e_max) break;
+        if(error <= e_max)
+        {
+            debug_message("Converged after " + std::to_string(t) + " iterations.");
+            break;
+        } 
 
     }
 }

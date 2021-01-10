@@ -1,7 +1,5 @@
 #include "vi_processor_impl_distr_01.h"
-#include <iostream>
 #include <limits>
-#include <mpi.h>
 
 
 void VI_Processor_Impl_Distr_01::value_iteration_impl(
@@ -129,7 +127,11 @@ void VI_Processor_Impl_Distr_01::value_iteration_impl(
             J = J_new;
 
             // If convergence rate is below threshold stop
-            if(error <= e_max) break;
+            if(error <= e_max)
+            {
+                debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
+                break;
+            } 
         }
 
     }

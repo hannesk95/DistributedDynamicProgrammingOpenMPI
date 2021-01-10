@@ -8,9 +8,12 @@
 
 #include "cnpy.h"
 
+#include <mpi.h>
 #include <string>
 #include <memory>
+#include <iostream>
 
+#define VI_PROCESSOR_DEBUG 
 
 ///
 /// \brief Value Iteration processor input arguments
@@ -55,6 +58,20 @@ class VI_Processor_Base {
     const float alpha;
     const float e_max;
     
+
+    void debug_message(std::string msg)
+    {
+        
+        #ifdef VI_PROCESSOR_DEBUG
+        int world_rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+        if(0 == world_rank)
+        {
+            std::cout << "[" << typeid(*this).name() << "]: " << msg << std::endl;
+        }
+        #endif
+    }
+
 
     private:
 
