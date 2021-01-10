@@ -36,32 +36,36 @@ int main(int argc, char *argv[])
 
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
     for(const int& comm_period : {10,50,100,500})
-        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, comm_period)));
-    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args)));
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
+    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
 
     const int n_runs = 20;
 
     Eigen::MatrixXf measurements(n_runs, processors.size());
     Eigen::VectorXf mse_J(processors.size());
+    Eigen::VectorXi err_Pi(processors.size());
 
     for(int i=0; i<n_runs; i++)
     {
         for(int j=0; j<processors.size(); j++)
         {
+            std::vector<int> Pi_vec;
+            std::vector<float> J_vec;
+
             auto t0 = std::chrono::system_clock::now();
-            (processors[j].get())->Process();
+            processors[j].get()->Process(Pi_vec, J_vec);
             auto t1 = std::chrono::system_clock::now();
 
             float time_in_sec = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1e6;
-
             measurements.coeffRef(i,j) = time_in_sec;
 
-            std::unique_ptr<Eigen::VectorXi> Pi;
-            std::unique_ptr<Eigen::VectorXf> J;
-            (processors[i].get())->GetPiAndJ(Pi, J);
+            Eigen::Map<Eigen::VectorXf> J(J_vec.data(), J_vec.size());
+            auto J_sq_err = (J - J_star).cwiseAbs2();
+            mse_J.coeffRef(j) = J_sq_err.mean();
 
-            auto J_se = (*J.get() - J_star).cwiseAbs2();
-            mse_J.coeffRef(j) = J_se.mean();
+            Eigen::Map<Eigen::VectorXi> Pi(Pi_vec.data(), Pi_vec.size());
+            Eigen::VectorXi Pi_diff = (Pi - Pi_star);
+            err_Pi.coeffRef(j) = (Pi_diff.array() > 0).count();
         }
     }
 
@@ -72,10 +76,13 @@ int main(int argc, char *argv[])
         Eigen::VectorXf t_mean =  measurements.colwise().mean();
         std::cout << t_mean << std::endl;
 
-        
-        // Print mean squared error of J for each processor implementation
-        std::cout << "========= MSE's of J vectors =========" << std::endl;
+        // Print mean square error of J vector for each processor implementation
+        std::cout << "========= MSE's for J vectors =========" << std::endl;
         std::cout << mse_J << std::endl;
+        
+        // Print number of wrong entries in Pi for each processor implementation
+        std::cout << "========= Number of errors in Pi vectors =========" << std::endl;
+        std::cout << err_Pi << std::endl;
     }
 
     MPI_Finalize();

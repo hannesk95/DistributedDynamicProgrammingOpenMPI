@@ -145,16 +145,7 @@ void VI_Processor_Impl_Distr_01::value_iteration_impl(
                 recvcounts.data(), 
                 displs.data(), 
                 MPI_INT, 
-                0, 
+                root_id, 
                 MPI_COMM_WORLD
     );
-}
-
-
-bool VI_Processor_Impl_Distr_01::HasResult()
-{
-    int world_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
-
-    return 0 == world_rank;
 }

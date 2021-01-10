@@ -20,11 +20,9 @@ class VI_Processor_Impl_Local : public VI_Processor_Base
 
     public:
 
-    VI_Processor_Impl_Local(const vi_processor_args_t& args)
-    : VI_Processor_Base(args)
+    VI_Processor_Impl_Local(const vi_processor_args_t& args, const int root_id)
+    : VI_Processor_Base(args, root_id)
     {}
-
-    bool HasResult() override;
 
 };
 

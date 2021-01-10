@@ -32,6 +32,9 @@ typedef Eigen::SparseMatrix<float, Eigen::RowMajor> SpMat_t;
 class VI_Processor_Base {
     protected:
 
+    // Id of processor which shall provide the results
+    const int root_id;
+
     ///
     /// \brief Value iteration implementation
     /// 
@@ -59,7 +62,7 @@ class VI_Processor_Base {
     const float e_max;
     
 
-    void debug_message(std::string msg, const int root_id = 0)
+    void debug_message(std::string msg)
     {
         
         #ifdef VI_PROCESSOR_DEBUG
@@ -90,8 +93,8 @@ class VI_Processor_Base {
 
     public:
 
-    VI_Processor_Base(const vi_processor_args_t& args, const float _alpha = 0.99, const float _e_max = 1e-11)
-        : alpha(_alpha), e_max(_e_max)
+    VI_Processor_Base(const vi_processor_args_t& args, const int _root_id, const float _alpha = 0.99, const float _e_max = 1e-10)
+        : alpha(_alpha), e_max(_e_max), root_id(_root_id)
     {
         // Load Parameters
         cnpy::NpyArray raw_fuel_capacity = cnpy::npz_load(args.Param_npz_dict_filename, "fuel_capacity");
@@ -127,33 +130,21 @@ class VI_Processor_Base {
     ///
     /// \brief Process the data
     /// 
-    /// \param T Maximal number of iterations
+    /// \param Pi_out Vector in the optimal strategy for each state shall be stored (only usefull in root processor)
+    /// \param J_out  Vector in the optimal cost for each state shall be stored (only usefull in root processor)
+    /// \param T      Maximal number of iteration steps
     ///
-    void Process(const unsigned int T = 10e6)
+    void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int T = 10e6)
     {
-        J.get()->fill(0.0);
+        J.get()->fill(0);
+        Pi.get()->fill(0);
+
         value_iteration_impl(*Pi.get(), *J.get(), *P.get(), u_max, s_max, f_max, T);
+
+        Pi_out.insert(Pi_out.end(), Pi.get()->data(), Pi.get()->data() + Pi.get()->size());
+        J_out.insert(J_out.end(), J.get()->data(), J.get()->data() + J.get()->size());
     }
 
-    ///
-    /// \brief Check if this processor contains the result
-    /// 
-    /// \return true 
-    /// \return false 
-    ///
-    virtual bool HasResult() = 0;
-
-    ///
-    /// \brief Get the Pi And J vector
-    /// 
-    /// \param Pi_out 
-    /// \param J_out 
-    ///
-    void GetPiAndJ(std::unique_ptr<Eigen::VectorXi>& Pi_out, std::unique_ptr<Eigen::VectorXf>& J_out)
-    {
-        Pi_out = std::move(std::unique_ptr<Eigen::VectorXi>(new Eigen::VectorXi(*Pi.get())));
-        J_out = std::move(std::unique_ptr<Eigen::VectorXf>(new Eigen::VectorXf(*J.get())));
-    }
 };
 
 

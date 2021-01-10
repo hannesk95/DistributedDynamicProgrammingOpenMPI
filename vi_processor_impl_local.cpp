@@ -90,12 +90,3 @@ void VI_Processor_Impl_Local::value_iteration_impl(
 
     }
 }
-
-bool VI_Processor_Impl_Local::HasResult() 
-{
-    // Actually all Processor have result but we will only use one
-    int world_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
-
-    return 0 == world_rank;
-}
