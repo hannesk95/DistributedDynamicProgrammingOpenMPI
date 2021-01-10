@@ -130,8 +130,8 @@ class VI_Processor_Base {
     ///
     /// \brief Process the data
     /// 
-    /// \param Pi_out Vector in the optimal strategy for each state shall be stored (only usefull in root processor)
-    /// \param J_out  Vector in the optimal cost for each state shall be stored (only usefull in root processor)
+    /// \param Pi_out Vector in which optimal strategy for each state shall be stored (only usefull in root processor)
+    /// \param J_out  Vector in which optimal cost for each state shall be stored (only usefull in root processor)
     /// \param T      Maximal number of iteration steps
     ///
     void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int T = 10e6)
