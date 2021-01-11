@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
 
-    vi_processor_args_t args = {
+    vi_data_args_t args = {
         .P_npy_indptr_filename      = "../data_debug/P_indptr.npy",
         .P_npy_indices_filename     = "../data_debug/P_indices.npy",
         .P_npy_data_filename        = "../data_debug/P_data.npy",
