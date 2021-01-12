@@ -58,17 +58,14 @@ set(CNPY_DIR lib/cnpy)
 
 add_subdirectory(${CNPY_DIR})
 
-# Add Include directories for cnpy
-include_directories(${CNPY_DIR} 
-                    ${MPI_INCLUDE_PATH} 
+# Add Include directories
+include_directories(${MPI_INCLUDE_PATH} 
                     ${ZLIB_INCLUDE_DIRS} 
                     ${LAPACKE_INCLUDE_DIRS_DEP} 
                     ${CMAKE_CURRENT_LIST_DIR}/lib/Eigen/
                     ${CMAKE_CURRENT_LIST_DIR}/lib/
                     ${CMAKE_CURRENT_LIST_DIR}/src/
-                    #${BOOST_INCLUDE_DIRS}
-                    #${PYTHON_INCLUDE_DIRS}
-                    #${PICKLINGTOOLS_INCLUDE_DIRS}
+                    ${CNPY_DIR} 
                     )
 
 # Create executable as usual
@@ -81,8 +78,5 @@ target_link_libraries(${PROJECT_NAME}
                       ${ZLIB_LIBRARIES} 
                       OpenMP::OpenMP_CXX 
                       ${LAPACKE_LIBRARIES_DEP} 
-                      #${BOOST_LIBRARIES} 
-                      #${PYTHON_LIBRARIES}
-                      #${PICKLINGTOOLS_LIBRARIES}
                       cnpy
                       )
