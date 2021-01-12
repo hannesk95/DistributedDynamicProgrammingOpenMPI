@@ -120,7 +120,7 @@ include_directories(${CNPY_DIR}
 # link_directories(${CMAKE_CURRENT_LIST_DIR}/lib/Eigen)
 
 # Create executable as usual
-file(GLOB SRC_FILES *.cpp)
+file(GLOB SRC_FILES src/*.cpp main.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 #add_dependencies(${PROJECT_NAME} boost)
