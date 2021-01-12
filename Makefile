@@ -29,4 +29,4 @@ compile: remove_build_directories convert_pickle
 
 # makes sure that "parameters.pickle" is converted to "parameters.npy"
 convert_pickle:
-	cd /data/ && python3 convert_pickle.py
+	cd data/ && python3 convert_pickle.py
