@@ -12,16 +12,12 @@ class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int u_max, 
-        const unsigned int s_max, 
-        const unsigned int f_max,
         const unsigned int T
     ) override;
 
     private:
-
-    // Period between data exchanges
-    int comm_period;
+    
+    int comm_period; // Period between data exchanges
 
     public:
 
