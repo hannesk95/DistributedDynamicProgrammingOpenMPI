@@ -1,12 +1,5 @@
 # High Performance Computing in Python and C++, Chair of Data Processing, WS20/21, Group 1
 
-###########
-Gruppen Mitglieder:
-###########
-- Stümke, Daniel: 			daniel.stuemke@tum.de
-- Christoph, Alexander:     alexander.christoph@tum.de
-- Kiechle, Johannes: 		johannes.kiechle@tum.de
-
 # To Do's
 
 ## Kommmunikationsprotokolle zu evaluieren:
@@ -17,9 +10,28 @@ Gruppen Mitglieder:
 
 > <a href="https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf" target="_blank">`Princeton Bootcamp Kommunikationsprotokolle`</a>
 
-## Erweitern des Projekts mit mehr Protokollen
+## Erweitern des Projekts mit mehr Kommunikationsstrategien
 
 Wir können hier verschiedene VI Implementierungen und Kommunikationsstrategien ausprobieren indem einfach eine von <a href="src/vi_processor_base.h" target="_blank">` VI_Processor_Base`</a> abgeleitete Klasse implementiert wird (siehe als Beispiel <a href="src/vi_processor_impl_local.cpp" target="_blank">`VI_Processor_Impl_Local`</a> oder <a href="src/vi_processor_impl_distr_01.cpp" target="_blank">`VI_Processor_Impl_Distr_01`</a>). 
+
+###########
+Gruppen Mitglieder:
+###########
+- Stümke, Daniel:           daniel.stuemke@tum.de
+- Christoph, Alexander:     alexander.christoph@tum.de
+- Kiechle, Johannes:        johannes.kiechle@tum.de
+- Gottwald, Martin:         martin.gottwald@tum.de
+- Hein, Alice:              alice.hein@tum.de
+
+# Repo-Struktur
+
+- <a href="data/" target="_blank">`data/`</a> - enthält Datensätze
+- <a href="lib/" target="_blank">`lib/`</a> - enthält alle benötigten Lirbraries
+- <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
+- <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
+- <a href="Makefile" targeT="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
+- <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
+- <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptskript, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
 
 # Datenimport
 
@@ -107,13 +119,3 @@ sudo dpkg -i openmpi-bin_2.1.1-8_amd64.deb
     - `hpc13` - 2.2.1
     - `hpc14` - nicht erreichbar
     - `hpc15` - 2.2.1
-
-# Implementiertes
-
-- <a href="data/" target="_blank">`data/`</a> - enthält Datensätze
-- <a href="lib/" target="_blank">`lib/`</a> - enthält alle benötigten Lirbraries
-- <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
-- <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
-- <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
-- <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptskript, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
-- <a href="Makefile" targeT="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
