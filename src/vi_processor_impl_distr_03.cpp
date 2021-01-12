@@ -7,46 +7,36 @@ void VI_Processor_Impl_Distr_03::value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
-    )
+        const unsigned int T)
 {
     int world_size, world_rank;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
 
     MPI_Status status;
-    MPI_Request request = MPI_REQUEST_NULL;
+    MPI_Request request;
 
     // Split up states for each process (last process gets additional remainder)
     const int process_first_state = (J.size() / world_size) * world_rank;
     const int process_last_state =  (world_size == world_rank + 1) ? J.size() : (J.size() / world_size) * (world_rank + 1);
     
-    // Create variables for final J
-    //if(world_rank == 0)
-    //{
-        // Eigen::VectorXf J_raw(J.size());
-        // J_raw.fill(0);
-        std::vector<float> J_raw(J.size(), 0.0);
-        //J_raw.fill(0);
-        std::vector<float> J_sub(process_last_state - process_first_state, 0.0);
-        //J_sub.fill(0);
-    //}
 
-    // Keeps track of the change in J vector
-    // float error = 0;
+    //std::vector<float> J_sub(process_last_state - process_first_state, 0.0);
+
+
+
+
+
 
     for(unsigned int t=0; t < T; ++t)
     {
         std::vector<float> J_raw;
+        std::vector<float> J_sub;
 
         // Compute one value iteration step for a range of states
-        float max_diff = iteration_step(Pi, J, P, process_first_state, process_last_state);
+        iteration_step(Pi, J, P, process_first_state, process_last_state);
 
-        // Store value of biggest change that appeared while updating J
-        //if(max_diff > error)
-        //{
-            //error = max_diff;
-        //}
+
 
         // Exchange results every comm_period cycles
         if(t % comm_period == 0)
@@ -64,6 +54,8 @@ void VI_Processor_Impl_Distr_03::value_iteration_impl(
                     MPI_COMM_WORLD,
                     &request
                 );
+
+                MPI_Wait(&request, &status);
             }          
 
             else
@@ -92,7 +84,7 @@ void VI_Processor_Impl_Distr_03::value_iteration_impl(
                     );                    
 
                     // Blocks and waits for destination process to receive data
-                    // MPI_Wait(&request, &status);
+                    MPI_Wait(&request, &status);
 
                     //int begin_offset = i*(process_last_state-process_first_state);
 
@@ -118,7 +110,7 @@ void VI_Processor_Impl_Distr_03::value_iteration_impl(
                     );
 
                     // Blocks and waits for destination process to receive data
-                    // MPI_Wait(&request, &status);
+                    MPI_Wait(&request, &status);
 
                     //int begin_offset = (world_size-1)*(process_last_state-process_first_state);
                     //J_raw.insert(J_raw.begin() + begin_offset, J_sub.begin(), J_sub.end());
