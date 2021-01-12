@@ -9,20 +9,11 @@ Gruppen Mitglieder:
 
 # To Do's
 
-## Dienstag 12.01
-
-- einigen auf eine Async_VI Implementierung (preferable Daniels)
-- Ordnerstruktur absprechen
-- Absprache wer welches Kommunikationsprotokoll testet
-- Rücksprache GIT
-
 ## Kommmunikationsprotokolle zu evaluieren:
 
-- Scatter + Gather
-- Scatter + Reduce
-- Send + Recv (blockierend) + mit Status + Probe
-- Send + Recv (nicht blockierend) + mit Status + Probe
-- Allreduce? - Allgather? (falls es das gibt)
+- AllGather + AllReduce --> VI_Processor_Impl_Distr_01
+- Send + Receive (blocking)
+- Send + Receive (non-blocking)
 
 - <a href="https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf" target="_blank">`Princeton Bootcamp Kommunikationsprotokolle`</a>
 
