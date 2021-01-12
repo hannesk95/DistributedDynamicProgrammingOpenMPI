@@ -1,4 +1,4 @@
-TARNAME = gruppe1
+TARNAME = gruppe1_send
 HOST = hpc08
 
 all:
