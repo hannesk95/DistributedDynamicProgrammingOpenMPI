@@ -16,54 +16,11 @@ endif()
 # -fopenmp:      activate openmp support (next lecture), might be enabled by default depending on your compiler
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -ffast-math -fopenmp")
 
-
-# I tried out PicklingTools but it is crap
-#include(ExternalProject)
-#ExternalProject_Add(
-#        libptools
-#        DEPENDS ""
-#        SOURCE_DIR ${PROJECT_SOURCE_DIR}/PicklingTools170Release/C++
-#        CONFIGURE_COMMAND ""
-#        BUILD_COMMAND make libptools.so
-#        BUILD_IN_SOURCE 1
-#        INSTALL_COMMAND ""
-#        )
-#set(PICKLINGTOOLS_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/PicklingTools170Release/C++ ${PROJECT_SOURCE_DIR}/PicklingTools170Release/C++/opencontainers_1_8_5/include)
-#file(GLOB PICKLINGTOOLS_LIBRARIES ${PROJECT_SOURCE_DIR}/PicklingTools170Release/C++/*.so)
-
-
-# If we wanted to use boost with python the following would be needed:
-#find_package(PythonLibs REQUIRED)
-# For some external project macros
-#include(ExternalProject)
-#set( boost_URL "http://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.bz2" )
-#set( boost_SHA1 "9f1dd4fa364a3e3156a77dc17aa562ef06404ff6" )
-# Download boost from git and build regex module
-#ExternalProject_Add(
-#    boost
-#    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/boost
-#    URL ${boost_URL}
-#    URL_HASH SHA1=${boost_SHA1}
-#    CONFIGURE_COMMAND ./bootstrap.sh
-#            --with-libraries=all
-#            --prefix=<INSTALL_DIR>
-#    BUILD_COMMAND ./b2 install link=static variant=release threading=multi runtime-link=static install 
-#    BUILD_IN_SOURCE 1
-#    INSTALL_COMMAND ""
-#    INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/boostinstall
-#)
-#set(BOOST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/boostinstall/include)
-#file(GLOB BOOST_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/boostinstall/lib/*.a)
-
-
-
-
-
-
-
 # Additional 'find module' scipts in the subfolder 'cmake'
 # Currently, FindLAPACKE is the important one. FindMKL exist for the case that you need it in another project.
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/;${CMAKE_MODULE_PATH}")
+#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/lib/cmake") #/;${CMAKE_MODULE_PATH}")
+#message("${CMAKE_CURRENT_LIST_DIR}/lib/cmake/") #;${CMAKE_MODULE_PATH}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/lib/cmake")
 
 # We want parallel code
 find_package(OpenMP REQUIRED)
@@ -97,7 +54,7 @@ find_package(LAPACKE REQUIRED)
 find_package(ZLIB REQUIRED)
 
 # Path to cnpy directory
-set(CNPY_DIR cnpy)
+set(CNPY_DIR lib/cnpy)
 
 add_subdirectory(${CNPY_DIR})
 
@@ -106,13 +63,16 @@ include_directories(${CNPY_DIR}
                     ${MPI_INCLUDE_PATH} 
                     ${ZLIB_INCLUDE_DIRS} 
                     ${LAPACKE_INCLUDE_DIRS_DEP} 
+                    ${CMAKE_CURRENT_LIST_DIR}/lib/Eigen/
+                    ${CMAKE_CURRENT_LIST_DIR}/lib/
+                    ${CMAKE_CURRENT_LIST_DIR}/src/
                     #${BOOST_INCLUDE_DIRS}
                     #${PYTHON_INCLUDE_DIRS}
                     #${PICKLINGTOOLS_INCLUDE_DIRS}
                     )
 
 # Create executable as usual
-file(GLOB SRC_FILES *.cpp)
+file(GLOB SRC_FILES src/*.cpp main.cpp)
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
 #add_dependencies(${PROJECT_NAME} boost)
