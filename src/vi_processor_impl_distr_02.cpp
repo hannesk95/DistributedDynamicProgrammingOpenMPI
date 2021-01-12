@@ -18,19 +18,14 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
     const int process_first_state = (J.size() / world_size) * world_rank;
     const int process_last_state =  (world_size == world_rank + 1) ? J.size() : (J.size() / world_size) * (world_rank + 1);
 
-
-    // Create variables for final J
-    if (world_rank == root_id)
-    {
-        // define variables that root needs
-        const int last_state = world_size - 1;
-        const int size = (J.size() / world_size);
-        const int last_size = J.size() - (size * last_state);
-        const int sub_size = J.size() / world_size;
-        Eigen::VectorXf J_new(J.size());
-        J_new.fill(0);
-        Eigen::VectorXf J_sub(sub_size);
-    }
+    // define variables that root needs
+    const int last_state = world_size - 1;
+    const int workload = (J.size() / world_size);
+    const int last_workload = J.size() - (workload * last_state);
+    const int sub_size = J.size() / world_size;
+    Eigen::VectorXf J_new(J.size());
+    J_new.fill(0);
+    Eigen::VectorXf J_sub(sub_size);
 
     // Keeps track of the change in J vector
     float error = 0;
@@ -56,33 +51,33 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
                 // Synchronize all workers
                 MPI_Barrier(MPI_COMM_WORLD);
                 // set first piece
-                J_new.segment<size>(0) = J.segment<size>(0);
+                J_new.segment(0, workload) = J.segment(0, workload);
                 for (int i = 1; i < last_state; i++)
                 {
-                  MPI_Recv(&J_sub, size, MPI_FLOAT, i, 0, MPI_COMM_WORLD);
-                  J_new.segment<size>(size * i) = J_sub;
+                  MPI_Recv(&J_sub, workload, MPI_FLOAT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                  J_new.segment(workload * i, workload) = J_sub;
                 }
-                MPI_Recv(&J_sub, last_size, MPI_FLOAT, last_state, 0, MPI_COMM_WORLD);
-                J_new.segment<last_size>(size * last_state) = J_sub;
+                MPI_Recv(&J_sub, last_workload, MPI_FLOAT, last_state, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                J_new.segment(workload * last_state, last_workload) = J_sub;
                 MPI_Bcast(J_new.data(), J_new.size(), MPI_FLOAT, root_id, MPI_COMM_WORLD);
+            
+                // Check for convergence
+                auto J_abs_diff = (J - J_new).cwiseAbs();
+                error = J_abs_diff.maxCoeff();
+
+                // Overwrite J
+                J = J_new;
+
+                // If convergence rate is below threshold stop
+                if(error <= e_max)
+                {
+                    debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
+                    break;
+                }
+
+                // Reset change rate to 0 such that it can be overwritten with a new (smaller) value
+                error = 0;
             }
-            
-            // Check for convergence
-            auto J_abs_diff = (J - J_new).cwiseAbs();
-            error = J_abs_diff.maxCoeff();
-            
-            // Overwrite J
-            J = J_new;
-
-            // If convergence rate is below threshold stop
-            if(error <= e_max)
-            {
-                debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
-                break;
-            } 
-
-            // Reset change rate to 0 such that it can be overwritten with a new (smaller) value
-            error = 0;
         }
 
     }
