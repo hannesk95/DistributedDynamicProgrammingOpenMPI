@@ -1,67 +1,36 @@
 # High Performance Computing in Python and C++, Chair of Data Processing, WS20/21, Group 1
 
 ###########
-Gruppen Mitglieder:
+Group members:
 ###########
 - Stümke, Daniel: 			daniel.stuemke@tum.de
 - Christoph, Alexander:     alexander.christoph@tum.de
 - Kiechle, Johannes: 		johannes.kiechle@tum.de
 
-# To Do's
+# Daniels Branch
 
-## Dienstag 12.01
+Wir können hier verschiedene VI Implementierungen und Kommunikationsstrategien ausprobieren indem einfach eine von `VI_Processor_Base` abgeleitete Klasse implementiert wird (siehe als Beispiel `VI_Processor_Impl_Local` oder `VI_Processor_Impl_Distr_01`). 
 
-- einigen auf eine Async_VI Implementierung (preferable Daniels)
-- Ordnerstruktur absprechen
-- Absprache wer welches Kommunikationsprotokoll testet
-- Rücksprache GIT
+# Datenimport
 
-## Kommmunikationsprotokolle zu evaluieren:
+Die Daten werden im Numpy Format eingelesen. Dafür müssen die `parameters.pickle` Dateien in `parameters.npz` konvertiert werden. Dafür ließt man das Parameter-Dictionary ein und speichert es dann wie folgt ab `np.savez('/some/path/parameters.npz', **parameters)`.
 
-- Scatter + Gather
-- Scatter + Reduce
-- Send + Recv (blockierend) + mit Status + Probe
-- Send + Recv (nicht blockierend) + mit Status + Probe
-- Allreduce? - Allgather? (falls es das gibt)
+# Idee zur Evaluation verschiedener Implementierungen
 
-- <a href="https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf" target="_blank">`Princeton Bootcamp Kommunikationsprotokolle`</a>
+Wenn mehrere Implementierungen verglichen werden sollen können wir in der `main` Funktion eine Liste erstellen welche mehrere Konkrete Implementierungen enthält. Dann Messen wir iterativ für jede Implementierung die Berechnungszeit (jeweils ~20 mal) und vergleichen die mittlere Ausführungsdauer und deren Standardabweichung.
 
-## Generelles
+# Programm ausführen
 
-- sample code vom Martin zum Laufen bringen (siehe `OpenMPI installieren`)
-- Numpy Arrays direkt in C++ einlesen - <a href="https://github.com/rogersce/cnpy" target="_blank">`cnpy by Carl Rogers`</a> -> Beispiel unter <a href="data_import/main.cpp" target="_blank">`main.cpp`</a>
-- pickle direkt in C++ einlesen
-- einheitliche Implementation der `Asynchronous Value Iteration` in <a href="data_import/lib/inc/Async_VI.h" target="_blank">`inc/`</a> bzw. <a href="data_import/lib/src/Async_VI.cpp" target="_blank">`src/`</a>. Implementierung muss dort dementsprechend geändert/angepasst werden. Aufruf/Testing bereits in <a href="data_import/main.cpp" target="_blank">`main.cpp`</a> enthalten
+Meldet euch über ssh auf `hpc05` an. Wechselt ins lrz Verzeichniss `~/lrz-nashome`. Clont das Repository und wechselt in diesen Branch `git checkout daniel`.
+Dann wie gewohnt `mkdir build`, `cd build`, `cmake ..` und `make` ausführen. 
 
-# OpenMPI installieren
-
-- installer Dateien sind im Ordner <a href="install_files/" target="_blank">`install_files/`</a> abgelegt und müssen in der richtigen Reihenfolge installiert werden (auf der WSL). Danach ist Version `2.2.1` installiert
-```cmd
-cd install_files
-sudo dpkg -i libhwloc5_1.11.9-1_amd64.deb
-sudo dpkg -i libopenmpi2_2.1.1-8_amd64.deb
-sudo dpkg -i openmpi-common_2.1.1-8_all.deb
-sudo dpkg -i openmpi-bin_2.1.1-8_amd64.deb
+Überprüft das die `~/.ssh/config` richtig ist:
+```text
+Host *
+        User DeinUserName
+        ForwardX11 yes
+        Compression yes
 ```
 
-- Versionen auf den Eikon Rechnern
-    - `hpc01` - 2.2.1
-    - `hpc02` - 4.0.3
-    - `hpc03` - 2.2.1
-    - `hpc04` - nicht erreichbar
-    - `hpc05` - 2.2.1
-    - `hpc06` - 2.2.1
-    - `hpc07` - 2.2.1
-    - `hpc08` - 2.2.1
-    - `hpc09` - 2.2.1
-    - `hpc10` - 2.2.1
-    - `hpc11` - 2.2.1
-    - `hpc12` - 2.2.1
-    - `hpc13` - 2.2.1
-    - `hpc14` - nicht erreichbar
-    - `hpc15` - 2.2.1
+Jetzt sollte man im `build` Ordner das Programm einfach via `mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe` starten können.
 
-# Implementiertes
-
-- <a href="data/" target="_blank">`data/`</a>
-- <a href="data_import/" target="_blank">`data_import/`</a>
