@@ -22,7 +22,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     int processor_start = processor_workload * world_rank;
     int processor_end = processor_workload * (world_rank +1);
 
-    Eigen::VectorXf J_processor(processor_workload);
+    Eigen::VectorXf J_processor(0);
 
     if (world_rank == 0)
     {
@@ -31,7 +31,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     }
 
 
-
+    float error = 0;
 
 
     for(unsigned int t=0; t < T; ++t)
@@ -48,7 +48,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                 MPI_Isend(J_raw + processor_start,
                     processor_workload,
                     MPI_FLOAT,
-                    0,
+                    root_id,
                     0,
                     MPI_COMM_WORLD,
                     &request
@@ -79,7 +79,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                         processor_workload,
                         MPI_FLOAT,
                         source_rank,
-                        0, 
+                        MPI_ANY_TAG,
                         MPI_COMM_WORLD,
                         &request
                     );                    
@@ -87,88 +87,30 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     // Blocks and waits for destination process to receive data
                     MPI_Wait(&request, &status);
 
-                    //int begin_offset = i*(process_last_state-process_first_state);
+                    float recv_max_diff = (J.segment(source_rank * processor_workload, processor_workload) -
+                                           J_processor).cwiseAbs().maxCoeff();
 
-                    //J_raw.insert(J_raw.begin() + begin_offset, J_sub.begin(), J_sub.end());
-
-                    for(int j = 0; i < J_sub.size(); i++)
+                    if (recv_max_diff > error)
                     {
-                        J_raw.push_back(J_sub[j]);
+                        error = recv_max_diff;
                     }
 
-                }
-
-                if(world_size != 1)
-                {
-                    MPI_Irecv(
-                            &J_sub,
-                            J.size() - (process_last_state-process_first_state)*(world_size-1),
-                            MPI_FLOAT,
-                            world_rank-1,
-                            0,
-                            MPI_COMM_WORLD,
-                            &request
-                    );
-
-                    // Blocks and waits for destination process to receive data
-                    MPI_Wait(&request, &status);
-
-                    //int begin_offset = (world_size-1)*(process_last_state-process_first_state);
-                    //J_raw.insert(J_raw.begin() + begin_offset, J_sub.begin(), J_sub.end());
-
-                    for(int i = 0; i < J_sub.size(); i++)
-                    {
-                        J_raw.push_back(J_sub[i]);
-                    }
+                    J.segment(source_rank * processor_workload, processor_workload) = J_processor;
                 }
                 
-                // Map std::vector into Eigen::Vector
-                Eigen::Map<Eigen::VectorXf> J_new(J_raw.data(), J_raw.size());
-
-                // Calculate error and pick maximum
-                auto error = (J_new - J).cwiseAbs().maxCoeff();
+                MPI_Bcast(&error, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD);
 
                 // If convergence criteria is reached -> terminate
                 if(error <= e_max)
                 {
                     debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
                     break;
-                } 
+                }
 
-                // Else: Broadcast J_raw to all processors as algorithm did not converge
-                MPI_Bcast(
-                    J_new.data(),
-                    J_new.size(),
-                    MPI_FLOAT,
-                    0,
-                    MPI_COMM_WORLD
-                );                 
+                MPI_Bcast(J.data(), J.size(), MPI_FLOAT, root_id, MPI_COMM_WORLD);
+
+                error = 0;
             }           
         }
     }
-
-//    std::vector<int> recvcounts;    // Number of states for each process
-//    std::vector<int> displs;        // Displacement of sub vectors for each process
-//    for(int i=0; i < world_size; ++i)
-//    {
-//        if(i+1 < world_size) recvcounts.push_back((J.size() / world_size));
-//        else recvcounts.push_back((J.size() / world_size) + J.size() % world_size);
-//
-//        if(i == 0) displs.push_back(0);
-//        else displs.push_back(displs[i-1] + recvcounts[i-1]);
-//    }
-//
-//    // Merge Policy
-//    int* Pi_raw = Pi.data();
-//    MPI_Gatherv(
-//            &Pi_raw[process_first_state],
-//            process_last_state - process_first_state,
-//            MPI_INT,
-//            Pi_raw,
-//            recvcounts.data(),
-//            displs.data(),
-//            MPI_INT,
-//            0,
-//            MPI_COMM_WORLD
-//    );
 }
