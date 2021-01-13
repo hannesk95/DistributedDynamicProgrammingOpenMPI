@@ -1,6 +1,7 @@
 #include "vi_processor_base.h"
 #include "cnpy.h"
 #include <mpi.h>
+#include <omp.h>
 
 
 VI_Processor_Base::VI_Processor_Base(const vi_processor_args_t& args, const int _root_id, const float _alpha, const float _e_max)
@@ -73,6 +74,7 @@ float VI_Processor_Base::iteration_step(
 {
     float error = 0;
 
+    #pragma omp parallel for
     for(unsigned int s=process_first_state; s < process_last_state; ++s)
     {
 
@@ -89,6 +91,7 @@ float VI_Processor_Base::iteration_step(
         float g_min = std::numeric_limits<float>::max();
                     
         // u is action
+        #pragma omp parallel for
         for(int u=0; u < P_s.outerSize(); ++u)
         {
             // Iterate over columns of current row
