@@ -4,6 +4,7 @@
 #include <mpi.h>
 
 #include "vi_processor_impl_local.h"
+#include "vi_processor_impl_distr_01.h"
 #include "vi_processor_impl_distr_02.h"
 
 #include "cnpy.h"
@@ -35,6 +36,8 @@ int main(int argc, char *argv[])
 
 
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
+    for(const int& comm_period : {10,50,100,500})
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
     for(const int& comm_period : {10,50,100,500})
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
