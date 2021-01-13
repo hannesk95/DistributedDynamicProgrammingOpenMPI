@@ -1,5 +1,5 @@
-#ifndef __VI_PROCESSOR_IMPL_DISTR_H
-#define __VI_PROCESSOR_IMPL_DISTR_H
+#ifndef __VI_PROCESSOR_IMPL_DISTR_02_H
+#define __VI_PROCESSOR_IMPL_DISTR_02_H
 
 #include "vi_processor_base.h"
 
