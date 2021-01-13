@@ -74,7 +74,7 @@ float VI_Processor_Base::iteration_step(
 {
     float error = 0;
 
-    #pragma omp parallel for
+//    #pragma omp parallel for
     for(unsigned int s=process_first_state; s < process_last_state; ++s)
     {
 
@@ -91,7 +91,7 @@ float VI_Processor_Base::iteration_step(
         float g_min = std::numeric_limits<float>::max();
                     
         // u is action
-        #pragma omp parallel for
+//        #pragma omp parallel for
         for(int u=0; u < P_s.outerSize(); ++u)
         {
             // Iterate over columns of current row
