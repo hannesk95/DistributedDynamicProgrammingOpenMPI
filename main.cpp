@@ -17,16 +17,18 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
 
+    std::string dataset = "data_debug";
+
     vi_processor_args_t args = {
-        .P_npy_indptr_filename      = "../data/data_debug/P_indptr.npy",
-        .P_npy_indices_filename     = "../data/data_debug/P_indices.npy",
-        .P_npy_data_filename        = "../data/data_debug/P_data.npy",
-        .P_npy_shape_filename       = "../data/data_debug/P_shape.npy",
-        .Param_npz_dict_filename    = "../data/data_debug/parameters.npz"
+        .P_npy_indptr_filename      = "../data/" + dataset + "/P_indptr.npy",
+        .P_npy_indices_filename     = "../data/" + dataset + "/P_indices.npy",
+        .P_npy_data_filename        = "../data/" + dataset + "/P_data.npy",
+        .P_npy_shape_filename       = "../data/" + dataset + "/P_shape.npy",
+        .Param_npz_dict_filename    = "../data/" + dataset + "/parameters.npz"
     };
 
-    cnpy::NpyArray raw_J_star = cnpy::npy_load("../data/data_debug/J_star_alpha_0_99_iter_1000.npy");
-    cnpy::NpyArray raw_Pi_star = cnpy::npy_load("../data/data_debug/pi_star_alpha_0_99_iter_1000.npy");
+    cnpy::NpyArray raw_J_star = cnpy::npy_load("../data/" + dataset + "/J_star_alpha_0_99_iter_1000.npy");
+    cnpy::NpyArray raw_Pi_star = cnpy::npy_load("../data/" + dataset + "/pi_star_alpha_0_99_iter_1000.npy");
 
     std::vector<float> J_star_vec = raw_J_star.as_vec<float>();
     std::vector<int> Pi_star_vec = raw_Pi_star.as_vec<int>();
