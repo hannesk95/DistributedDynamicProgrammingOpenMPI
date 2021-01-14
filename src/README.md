@@ -66,9 +66,28 @@ Header of <a href="vi_processor_impl_distr_02.h" target="_blank">`vi_processor_i
 
 -------
 
+## <a href="vi_processor_impl_distr_42.cpp" target="_blank">`vi_processor_impl_distr_42.cpp`</a>
+
+third implementation of a communication scheme. Using `MPI_Sendrecv` and `MPI_Gatherv`. Updates `J` every period completely, inherits functionality from `VI_Processor_Base`. Works synchronely
+
+Given functionality:
+- `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
+
+<br/><br/>
+
+-------
+
+## <a href="vi_processor_impl_distr_02.h" target="_blank">`vi_processor_impl_distr_02.h`</a>
+
+Header of <a href="vi_processor_impl_distr_02.h" target="_blank">`vi_processor_impl_distr_02.h`</a>
+
+<br/><br/>
+
+-------
+
 ## <a href="vi_processor_impl_local.cpp" target="_blank">`vi_processor_impl_local.cpp`</a>
 
-local implementation of value iteration without any communication scheme or parallelization. Implemented to use as reference for performance comparisons. Inherits functionality from `VI_Processor_Base`. Works synchronely
+local implementation of value iteration without any communication scheme or parallelization. Implemented to use as reference for performance comparisons. Updates `J` every period completely, inherits functionality from `VI_Processor_Base`. Works synchronely
 
 Given functionality:
 - `void value_iteration_impl()` - concrete implementation of value iteration

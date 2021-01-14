@@ -36,6 +36,7 @@ Gruppen Mitglieder:
 
 - <a href="data/" target="_blank">`data/`</a> - enthält Datensätze
 - <a href="lib/" target="_blank">`lib/`</a> - enthält alle benötigten Lirbraries
+- <a href="results/" target="_blank">`results/`</a> - enthält die Resultate der Implementierungen
 - <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
 - <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
 - <a href="Makefile" targeT="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
