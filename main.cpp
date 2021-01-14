@@ -112,7 +112,6 @@ int main(int argc, char *argv[])
                 period = "";
             }
             // overwrite if file already exists
-            std::cout << processor_name + period << std::endl;
             cnpy::npz_save("../data/" + dataset + "/results/" + processor_name + period + ".npz", "mean_execution_time", &t_mean[j], {1}, "w");
             cnpy::npz_save("../data/" + dataset + "/results/" + processor_name + period + ".npz", "MSE_J", &mse_J[j], {1}, "a");
             cnpy::npz_save("../data/" + dataset + "/results/" + processor_name + period + ".npz", "errors_Pi", &err_Pi[j], {1}, "a");
