@@ -47,35 +47,39 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
             partner_idx = t % (world_size - 1);
 
-            std::vector<float> recv_buffer(J.size() / world_size + (J.size() % world_size) + 1);
-            if(recv_partner_ids[partner_idx] != world_size - 1)
-            {
-                recv_buffer.resize(J.size() / world_size + 1);
-            }
+            //std::vector<float> recv_buffer(J.size() / world_size + (J.size() % world_size) + 1);
+            //if(recv_partner_ids[partner_idx] != world_size - 1)
+            //{
+            //    recv_buffer.resize(J.size() / world_size + 1);
+            //}
 
             std::vector<float> send_buffer(process_last_state - process_first_state);
             send_buffer.assign(J.data() + process_first_state, J.data() + process_last_state);
             send_buffer.push_back(error);
 
-            MPI_Status sendrecv_status[2];
-            MPI_Request sendrecv_reqs[2];
-            MPI_Irecv(  recv_buffer.data(),
-                        recv_buffer.size(),
-                        MPI_FLOAT,
-                        recv_partner_ids[partner_idx],
-                        0,
-                        MPI_COMM_WORLD,
-                        &sendrecv_reqs[0]
-                        );
+            
+            MPI_Request send_req;
             MPI_Isend(  send_buffer.data(),
                         send_buffer.size(),
                         MPI_FLOAT,
                         send_partner_ids[partner_idx],
                         0,
                         MPI_COMM_WORLD,
-                        &sendrecv_reqs[1]
+                        &send_req
                         );
-            MPI_Waitall(2,sendrecv_reqs,sendrecv_status);
+            MPI_Status probe_status;
+            MPI_Probe(recv_partner_ids[partner_idx], 0, MPI_COMM_WORLD, &probe_status);
+            int recv_count;
+            MPI_Get_count(&probe_status, MPI_FLOAT, &recv_count);
+            std::vector<float> recv_buffer(recv_count);
+            MPI_Recv(   recv_buffer.data(),
+                        recv_buffer.size(),
+                        MPI_FLOAT,
+                        recv_partner_ids[partner_idx],
+                        0,
+                        MPI_COMM_WORLD,
+                        MPI_STATUS_IGNORE);
+            MPI_Wait(&send_req, MPI_STATUS_IGNORE);
 
             //MPI_Status sendrecv_status;
             //MPI_Sendrecv(   send_buffer.data(),
