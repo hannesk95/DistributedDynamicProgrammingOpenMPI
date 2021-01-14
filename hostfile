@@ -1,9 +1,9 @@
 # All computers mpirun should use
 # Comments as in Python
-localhost slots=6 max-slots=6
-#hpc01.clients.eikon.tum.de slots=2 max-slots=2
-#hpc05.clients.eikon.tum.de slots=2 max-slots=2
-#hpc06.clients.eikon.tum.de slots=2 max-slots=2
-#hpc07.clients.eikon.tum.de slots=2 max-slots=2
-#hpc08.clients.eikon.tum.de slots=2 max-slots=2
+#localhost slots=6 max-slots=6
+hpc01.clients.eikon.tum.de slots=2 max-slots=2
+hpc05.clients.eikon.tum.de slots=2 max-slots=2
+hpc06.clients.eikon.tum.de slots=2 max-slots=2
+hpc07.clients.eikon.tum.de slots=2 max-slots=2
+hpc08.clients.eikon.tum.de slots=2 max-slots=2
 
