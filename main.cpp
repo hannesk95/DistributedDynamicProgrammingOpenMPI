@@ -13,15 +13,10 @@
 int main(int argc, char *argv[])
 {
     MPI_Init(&argc, &argv);
-    // set dataset, number of comm_periods and number of repeats
-    std::string dataset = "data_debug";
-    std::vector<int> periods{10,50,100,500};
-    const int n_runs = 2;
-
     std::string data_folder = "../data/data_debug"; // Here can the data be found
     std::string result_folder = "../results";       // Here shall the evaluation results be stored
     std::vector<int> comm_periods{10,50,100,500};   // Communication periods which shall be evaluated
-    const int n_runs = 2;                           // Number of evaluation runs
+    const int n_runs = 20;                           // Number of evaluation runs
 
     int world_size, world_rank;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
