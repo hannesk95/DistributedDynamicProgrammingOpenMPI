@@ -17,7 +17,7 @@ void VI_Processor_Impl_Local::value_iteration_impl(
 
         if(error <= e_max)
         {
-            debug_message("Converged after " + std::to_string(t) + " iterations.");
+            debug_message("Converged after " + std::to_string(t) + " iterations");
             break;
         } 
 
