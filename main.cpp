@@ -5,6 +5,7 @@
 
 #include "vi_processor_impl_local.h"
 #include "vi_processor_impl_distr_01.h"
+#include "vi_processor_impl_distr_02.h"
 #include "vi_processor_impl_distr_42.h"
 
 #include "cnpy.h"
@@ -12,11 +13,10 @@
 int main(int argc, char *argv[])
 {
     MPI_Init(&argc, &argv);
-
     std::string data_folder = "../data/data_debug"; // Here can the data be found
     std::string result_folder = "../results";       // Here shall the evaluation results be stored
     std::vector<int> comm_periods{10,50,100,500};   // Communication periods which shall be evaluated
-    const int n_runs = 2;                           // Number of evaluation runs
+    const int n_runs = 20;                          // Number of evaluation runs
 
     int world_size, world_rank;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
@@ -42,7 +42,9 @@ int main(int argc, char *argv[])
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
-    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
+    // processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0)));
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
 
 

@@ -38,13 +38,13 @@ class VI_Processor_Base {
     /// \param Pi           Optimal policy will be stored in this vector
     /// \param J            Value for each state will be stored in this vector
     /// \param P            Transition probability matrix
-    /// \param T            Maximal number of iteration steps
+    /// \param max_iter            Maximal number of iteration steps
     ///
     virtual void value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
+        const unsigned int max_iter
     ) = 0;
 
     
@@ -57,7 +57,7 @@ class VI_Processor_Base {
 
 
     const float alpha; // Discount factor
-    const float e_max; // Convergence limit    
+    const float tolerance; // Convergence limit    
 
     ///
     /// \brief 
@@ -78,9 +78,8 @@ class VI_Processor_Base {
 
     private:    
 
-    unsigned int u_max; // Number of possible actions
-    unsigned int s_max; // Number of stars in navigation task
-    unsigned int f_max; // Maximal fuel level
+    unsigned int n_states; // Number of possible actions
+    unsigned int n_stars; // Number of stars in navigation task
 
     std::vector<int> P_indptr;
     std::vector<int> P_indices;
@@ -100,9 +99,9 @@ class VI_Processor_Base {
     /// 
     /// \param Pi_out Vector in which optimal strategy for each state shall be stored (only usefull in root processor)
     /// \param J_out  Vector in which optimal cost for each state shall be stored (only usefull in root processor)
-    /// \param T      Maximal number of iteration steps
+    /// \param max_iter      Maximal number of iteration steps
     ///
-    void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int T = 10e6);
+    void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter = 10e6);
     
     ///
     /// \brief Get the Name of the Processor

@@ -8,7 +8,7 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
+        const unsigned int max_iter
     )
 {
     int world_size, world_rank;
@@ -30,7 +30,7 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
     float error = 0;
 
-    for(unsigned int t=0; t < T; ++t)
+    for(unsigned int t=0; t < max_iter; ++t)
     {
 
         // Compute one value iteration step over all states
@@ -73,7 +73,7 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
         if(partner_idx == world_size - 2) 
         {
-            if(error <= e_max)
+            if(error <= tolerance)
             {   
                 debug_message("Converged after " + std::to_string(t) + " iterations");
                 break;
@@ -107,4 +107,9 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
                 MPI_COMM_WORLD
     );
 
+}
+
+std::string VI_Processor_Impl_Distr_42::GetName()
+{
+    return VI_Processor_Base::GetName();
 }
