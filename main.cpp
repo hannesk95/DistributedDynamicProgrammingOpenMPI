@@ -12,12 +12,14 @@
 int main(int argc, char *argv[])
 {
     MPI_Init(&argc, &argv);
+    // set dataset, number of comm_periods and number of repeats
+    std::string dataset = "data_debug";
+    std::vector<int> periods{10,50,100,500};
+    const int n_runs = 2;
 
     int world_size, world_rank;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
-
-    std::string dataset = "data_debug";
 
     vi_processor_args_t args = {
         .P_npy_indptr_filename      = "../data/" + dataset + "/P_indptr.npy",
@@ -36,15 +38,13 @@ int main(int argc, char *argv[])
     Eigen::Map<Eigen::VectorXf> J_star(J_star_vec.data(), J_star_vec.size());
     Eigen::Map<Eigen::VectorXi> Pi_star(Pi_star_vec.data(), Pi_star_vec.size());
 
-
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
-    for(const int& comm_period : {10,50,100,500})
+    for(const int& comm_period : periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
-    for(const int& comm_period : {10,50,100,500})
+    for(const int& comm_period : periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
 
-    const int n_runs = 20;
 
     Eigen::MatrixXf measurements(n_runs, processors.size());
     Eigen::VectorXf mse_J(processors.size());
@@ -88,6 +88,36 @@ int main(int argc, char *argv[])
         // Print number of wrong entries in Pi for each processor implementation
         std::cout << "========= Number of errors in Pi vectors =========" << std::endl;
         std::cout << err_Pi << std::endl;
+
+        // save results
+        int i = 0;
+        int j = 0;
+        // get name of first processor (to compare)
+        auto current_process = typeid(*processors[0]).name();
+        // go through all processors
+        for (auto& process : processors)
+        {
+            // check if name has changed -> if yes, then we restart with the numbers of periods. Can be coded better and cleaner for sure but works
+            if (current_process != typeid(*process).name())
+            {
+                i = 0;
+                current_process = typeid(*process).name();
+            }
+            // set name of processor
+            std::string period = "_" + std::to_string(periods[i++]);
+            std::string processor_name = typeid(*process).name();
+            // the local processor has no comm_period
+            if (processor_name.find("Local") != std::string::npos)
+            {
+                period = "";
+            }
+            // overwrite if file already exists
+            std::cout << processor_name + period << std::endl;
+            cnpy::npz_save("../data/" + dataset + "/results/" + processor_name + period + ".npz", "mean_execution_time", &t_mean[j], {1}, "w");
+            cnpy::npz_save("../data/" + dataset + "/results/" + processor_name + period + ".npz", "MSE_J", &mse_J[j], {1}, "a");
+            cnpy::npz_save("../data/" + dataset + "/results/" + processor_name + period + ".npz", "errors_Pi", &err_Pi[j], {1}, "a");
+            j+=1;
+        }
     }
 
     MPI_Finalize();
