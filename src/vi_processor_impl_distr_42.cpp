@@ -57,18 +57,20 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
             send_buffer.assign(J.data() + process_first_state, J.data() + process_last_state);
             send_buffer.push_back(error);
 
-            
+            int send_tag = (world_rank << 8 ) | send_partner_ids[partner_idx];
+            int recv_tag = (recv_partner_ids[partner_idx] << 8) | world_rank;
+
             MPI_Request send_req;
             MPI_Isend(  send_buffer.data(),
                         send_buffer.size(),
                         MPI_FLOAT,
                         send_partner_ids[partner_idx],
-                        0,
+                        send_tag,
                         MPI_COMM_WORLD,
                         &send_req
                         );
             MPI_Status probe_status;
-            MPI_Probe(recv_partner_ids[partner_idx], 0, MPI_COMM_WORLD, &probe_status);
+            MPI_Probe(recv_partner_ids[partner_idx], recv_tag, MPI_COMM_WORLD, &probe_status);
             int recv_count;
             MPI_Get_count(&probe_status, MPI_FLOAT, &recv_count);
             std::vector<float> recv_buffer(recv_count);
@@ -76,7 +78,7 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
                         recv_buffer.size(),
                         MPI_FLOAT,
                         recv_partner_ids[partner_idx],
-                        0,
+                        recv_tag,
                         MPI_COMM_WORLD,
                         MPI_STATUS_IGNORE);
             MPI_Wait(&send_req, MPI_STATUS_IGNORE);
