@@ -24,4 +24,4 @@ small dataset, contains much more data. For evaluation purposes
 
 ## <a href='convert_pickle.py' target='_blank'>`convert_pickle.py`</a>
 
-converts the relevant information of `parameters.pickle` into `.npz`-format. Result is `parameters.npz` in respective data folder. Gets called by <a href='../Makefile' target='_blank'>`Makefile`</a> and converts the `parameters.pickle` files for all available data folders.
+converts the relevant information of `parameters.pickle` into `.npz`-format. Result is `parameters.npz` in respective data folder. Gets called by <a href='../Makefile' target='_blank'>`Makefile`</a> and converts the `parameters.pickle` files for all available data folders
