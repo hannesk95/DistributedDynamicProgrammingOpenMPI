@@ -108,3 +108,8 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
     );
 
 }
+
+std::string VI_Processor_Impl_Distr_42::GetName()
+{
+    return VI_Processor_Base::GetName();
+}
