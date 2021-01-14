@@ -128,7 +128,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
     }
 }
 
-std::string VI_Processor_Impl_Distr_01::GetName()
+std::string VI_Processor_Impl_Distr_02::GetName()
 {
     return VI_Processor_Base::GetName() + "-" + std::to_string(comm_period);
 }
