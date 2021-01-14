@@ -20,7 +20,7 @@ class VI_Processor_Impl_Distr_42 : public VI_Processor_Base
 
     public:
 
-    VI_Processor_Impl_Distr_42(const vi_processor_args_t& args, const int root_id)
+    VI_Processor_Impl_Distr_42(const vi_data_args_t& args, const int root_id)
     : VI_Processor_Base(args, root_id)
     {}
 

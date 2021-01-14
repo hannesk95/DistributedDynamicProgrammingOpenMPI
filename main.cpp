@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank); // Rank of this process
 
-    vi_processor_args_t args = {
+    vi_data_args_t args = {
         .P_npy_indptr_filename      = data_folder + "/P_indptr.npy",
         .P_npy_indices_filename     = data_folder + "/P_indices.npy",
         .P_npy_data_filename        = data_folder + "/P_data.npy",
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
-    // processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0)));
+    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0)));
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
 
 

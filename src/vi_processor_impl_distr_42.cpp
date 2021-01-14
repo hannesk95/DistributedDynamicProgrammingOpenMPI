@@ -38,38 +38,47 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
         if(max_diff > error) error = max_diff;
 
-        int partner_idx = t % (world_size - 1);
+        // If we are running with a single process there is no partner
+        int partner_idx = -1;
 
-        std::vector<float> recv_buffer(J.size() / world_size + J.size() % world_size + 1);
-        if(recv_partner_ids[partner_idx] != world_size - 1)
-        {
-            recv_buffer.resize(J.size() / world_size + 1);
+        if(world_size > 1)
+        { 
+            // Code for the multi-process case
+            
+            partner_idx = t % (world_size - 1);
+
+            std::vector<float> recv_buffer(J.size() / world_size + J.size() % world_size + 1);
+            if(recv_partner_ids[partner_idx] != world_size - 1)
+            {
+                recv_buffer.resize(J.size() / world_size + 1);
+            }
+
+            std::vector<float> send_buffer(process_last_state - process_first_state);
+            send_buffer.assign(J.data() + process_first_state, J.data() + process_last_state);
+            send_buffer.push_back(error);
+
+            MPI_Status sendrecv_status;
+            MPI_Sendrecv(   send_buffer.data(),
+                            send_buffer.size(),
+                            MPI_FLOAT,
+                            send_partner_ids[partner_idx],
+                            0,
+                            recv_buffer.data(),
+                            recv_buffer.size(),
+                            MPI_FLOAT,
+                            recv_partner_ids[partner_idx],
+                            0,
+                            MPI_COMM_WORLD,
+                            &sendrecv_status);
+
+            float error_recv = recv_buffer.back();
+
+            if(error_recv > error) error = error_recv;
+
+            Eigen::Map<Eigen::VectorXf> J_recv(recv_buffer.data(), recv_buffer.size() - 1);
+            J.segment(recv_partner_ids[partner_idx] * (J.size() / world_size), J_recv.size()) = J_recv;
         }
 
-        std::vector<float> send_buffer(process_last_state - process_first_state);
-        send_buffer.assign(J.data() + process_first_state, J.data() + process_last_state);
-        send_buffer.push_back(error);
-
-        MPI_Status sendrecv_status;
-        MPI_Sendrecv(   send_buffer.data(),
-                        send_buffer.size(),
-                        MPI_FLOAT,
-                        send_partner_ids[partner_idx],
-                        0,
-                        recv_buffer.data(),
-                        recv_buffer.size(),
-                        MPI_FLOAT,
-                        recv_partner_ids[partner_idx],
-                        0,
-                        MPI_COMM_WORLD,
-                        &sendrecv_status);
-
-        float error_recv = recv_buffer.back();
-
-        if(error_recv > error) error = error_recv;
-
-        Eigen::Map<Eigen::VectorXf> J_recv(recv_buffer.data(), recv_buffer.size() - 1);
-        J.segment(recv_partner_ids[partner_idx] * (J.size() / world_size), J_recv.size()) = J_recv;
 
         if(partner_idx == world_size - 2) 
         {
