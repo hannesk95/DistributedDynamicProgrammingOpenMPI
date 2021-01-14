@@ -102,7 +102,13 @@ class VI_Processor_Base {
     /// \param max_iter      Maximal number of iteration steps
     ///
     void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter = 10e6);
-
+    
+    ///
+    /// \brief Get the Name of the Processor
+    /// 
+    /// \return string 
+    ///
+    virtual std::string GetName();
 };
 
 

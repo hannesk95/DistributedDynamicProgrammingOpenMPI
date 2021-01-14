@@ -45,11 +45,15 @@ void VI_Processor_Base::debug_message(std::string msg)
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     if(root_id == world_rank)
     {
-        std::cout << "[" << typeid(*this).name() << "]: " << msg << std::endl;
+        std::cout << "[" << GetName() << "]: " << msg << std::endl;
     }
     #endif
 }
 
+std::string VI_Processor_Base::GetName()
+{
+    return typeid(*this).name();
+}
 
 void VI_Processor_Base::Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter)
 {

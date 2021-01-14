@@ -10,7 +10,16 @@
 
 > <a href="https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf" target="_blank">`Princeton Bootcamp Kommunikationsprotokolle`</a>
 
-## Erweitern des Projekts mit mehr Kommunikationsstrategien
+## Anlegen eines Branches für Evaluierungsprogramm
+
+Das Evaluierungsprogramm soll nur dazu dienen die performanteste Implementierung zu ermitteln. Für die eigentliche Value Iteration Aufgabe erstellen wir im Master-Branch eine `main.cpp` Datei welcher wir z.B. via Kommandozeilenargumenten den Ordner zu den Daten sowie den Pfad in dem die Ergebnisse gespeichert werden sollen angeben.
+
+## Erstellen des Hauptprogrammes
+
+- Einlesen des Datenordner Pfades und des Resultateordner Pfades via Kommandozeilenargument
+- Optimal Values und optimal Strategy im Numpy Format im Resultateordner abspeichern, sodass es mit dem Script `data_demonstration.py` aus Hausaufgabe 2 verwendet werden kann.
+
+## Erweitern des Projekts mit mehr Protokollen
 
 Wir können hier verschiedene VI Implementierungen und Kommunikationsstrategien ausprobieren indem einfach eine von <a href="src/vi_processor_base.h" target="_blank">` VI_Processor_Base`</a> abgeleitete Klasse implementiert wird (siehe als Beispiel <a href="src/vi_processor_impl_local.cpp" target="_blank">`VI_Processor_Impl_Local`</a> oder <a href="src/vi_processor_impl_distr_01.cpp" target="_blank">`VI_Processor_Impl_Distr_01`</a>). 
 
@@ -39,7 +48,7 @@ Die Daten werden durch die <a href="Makefile" target="_blank">`Makefile`</a> wä
 
 # Evaluation verschiedener Implementierungen
 
-Wenn mehrere Implementierungen verglichen werden sollen wird in der <a href="main.cpp" target="_blank">`main.cpp`</a> eine Liste erstellt welche mehrere konkrete Implementierungen enthält. Dann Messen wir iterativ für jede Implementierung die Berechnungszeit (jeweils ~20 mal) und vergleichen die mittlere Ausführungsdauer und deren Standardabweichung.
+Wenn mehrere Implementierungen verglichen werden sollen wird in der <a href="main.cpp" target="_blank">`main.cpp`</a> eine Liste erstellt welche mehrere konkrete Implementierungen enthält. Dann Messen wir iterativ für jede Implementierung die Berechnungszeit (jeweils ~20 mal) und vergleichen die mittlere Ausführungsdauer und eventuell auch deren Standardabweichung.
 
 # Programm ausführen
 

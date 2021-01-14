@@ -30,6 +30,8 @@ class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
         this->comm_period = comm_period;
     }
 
+    std::string GetName() override;
+
 };
 
 
