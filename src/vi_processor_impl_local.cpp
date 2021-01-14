@@ -23,3 +23,8 @@ void VI_Processor_Impl_Local::value_iteration_impl(
 
     }
 }
+
+std::string VI_Processor_Impl_Local::GetName()
+{
+    return VI_Processor_Base::GetName();
+}

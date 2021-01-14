@@ -21,6 +21,8 @@ class VI_Processor_Impl_Local : public VI_Processor_Base
     : VI_Processor_Base(args, root_id)
     {}
 
+    std::string GetName() override;
+
 };
 
 
