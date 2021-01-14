@@ -77,9 +77,9 @@ Given functionality:
 
 -------
 
-## <a href="vi_processor_impl_distr_02.h" target="_blank">`vi_processor_impl_distr_02.h`</a>
+## <a href="vi_processor_impl_distr_42.h" target="_blank">`vi_processor_impl_distr_42.h`</a>
 
-Header of <a href="vi_processor_impl_distr_02.h" target="_blank">`vi_processor_impl_distr_02.h`</a>
+Header of <a href="vi_processor_impl_distr_42.h" target="_blank">`vi_processor_impl_distr_42.h`</a>
 
 <br/><br/>
 
