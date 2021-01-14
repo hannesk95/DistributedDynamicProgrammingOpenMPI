@@ -1,5 +1,5 @@
-#ifndef __VI_PROCESSOR_IMPL_DISTR_H
-#define __VI_PROCESSOR_IMPL_DISTR_H
+#ifndef __VI_PROCESSOR_IMPL_DISTR_01_H
+#define __VI_PROCESSOR_IMPL_DISTR_01_H
 
 #include "vi_processor_base.h"
 
@@ -29,6 +29,8 @@ class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
     {
         this->comm_period = comm_period;
     }
+
+    std::string GetName() override;
 
 };
 
