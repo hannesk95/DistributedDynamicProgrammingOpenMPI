@@ -3,7 +3,7 @@
 #include <mpi.h>
 
 
-VI_Processor_Base::VI_Processor_Base(const vi_processor_args_t& args, const int _root_id, const float _alpha, const float _e_max)
+VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha, const float _e_max)
     : alpha(_alpha), e_max(_e_max), root_id(_root_id)
 {
     // Load Parameters

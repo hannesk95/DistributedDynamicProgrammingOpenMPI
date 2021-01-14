@@ -10,4 +10,3 @@ for name in os.listdir(os.getcwd()):
             parameters = pickle.load(the_file)
             
         np.savez(os.path.join(path,"parameters.npz"), **parameters)
-        

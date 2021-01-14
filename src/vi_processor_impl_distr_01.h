@@ -21,7 +21,7 @@ class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
 
     public:
 
-    VI_Processor_Impl_Distr_01(const vi_processor_args_t& args, const int root_id, int _comm_period = 100)
+    VI_Processor_Impl_Distr_01(const vi_data_args_t& args, const int root_id, int _comm_period = 100)
     : VI_Processor_Base(args, root_id), comm_period(_comm_period)
     {}
 
