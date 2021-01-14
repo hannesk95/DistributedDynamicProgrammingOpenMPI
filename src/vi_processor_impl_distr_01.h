@@ -12,7 +12,7 @@ class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
+        const unsigned int max_iter
     ) override;
 
     private:

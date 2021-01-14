@@ -7,7 +7,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
+        const unsigned int max_iter
     )
 {
     int world_size, world_rank;
@@ -34,7 +34,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
     // Keeps track of the change in J vector
     float error = 0;
 
-    for(unsigned int t=0; t < T; ++t)
+    for(unsigned int t=0; t < max_iter; ++t)
     {
         // Compute one value iteration step for a range of states
         float max_diff = iteration_step(Pi, J, P, process_first_state, process_last_state);
@@ -82,7 +82,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
             // Broadcast error from root to all processes (that they can stop respectively), also synchronizes all processes
             MPI_Bcast(&error, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD);
             // If convergence rate is below threshold stop
-            if(error <= e_max)
+            if(error <= tolerance)
             {
                 debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
                 break;
