@@ -2,6 +2,23 @@
 #include <limits>
 #include <mpi.h>
 
+bool VI_Processor_Impl_Distr_02::SetParameter(std::string param, float value)
+{
+    if(param == "comm_period")
+    {
+        comm_period = value;
+        return true;
+    }
+
+    return VI_Processor_Base::SetParameter(param, value);
+}
+
+std::map<std::string, float> VI_Processor_Impl_Distr_02::GetParameters()
+{
+    std::map<std::string, float> parameters = VI_Processor_Base::GetParameters();
+    parameters["comm_period"] = comm_period;
+    return parameters;
+}
 
 void VI_Processor_Impl_Distr_02::value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
