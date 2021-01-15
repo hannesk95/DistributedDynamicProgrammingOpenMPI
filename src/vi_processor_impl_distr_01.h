@@ -32,6 +32,9 @@ class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
 
     std::string GetName() override;
 
+    bool SetParameter(std::string param, float value) override;
+
+    std::map<std::string, float> GetParameters() override;
 };
 
 

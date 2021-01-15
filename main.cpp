@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     std::string data_folder = "../data/data_debug"; // Here can the data be found
     std::string result_folder = "../results";       // Here shall the evaluation results be stored
     std::vector<int> comm_periods{10,50,100,500};   // Communication periods which shall be evaluated
-    const int n_runs = 20;                          // Number of evaluation runs
+    const int n_runs = 10;                          // Number of evaluation runs
 
     int world_size, world_rank;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size); // Number of processes
@@ -96,6 +96,11 @@ int main(int argc, char *argv[])
         for (auto& process : processors)
         {
             std::cout << process->GetName() << std::endl;
+            auto parameters = process->GetParameters();
+            for(auto &param:parameters)
+            {
+                std::cout << "\t" << param.first << ": " << param.second << std::endl;
+            }
             cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "mean_execution_time", t_mean.data() + j, {1}, "w");
             cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "MSE_J", mse_J.data() + j, {1}, "a");
             cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "errors_Pi", err_Pi.data() + j, {1}, "a");

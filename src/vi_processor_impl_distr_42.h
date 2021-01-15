@@ -17,14 +17,19 @@ class VI_Processor_Impl_Distr_42 : public VI_Processor_Base
 
     private:
     
+    int comm_period; // Period between data exchanges
 
     public:
 
-    VI_Processor_Impl_Distr_42(const vi_data_args_t& args, const int root_id)
-    : VI_Processor_Base(args, root_id)
-    {}
+    VI_Processor_Impl_Distr_42(const vi_data_args_t& args, const int root_id, int _comm_period = 100)
+    : VI_Processor_Base(args, root_id), comm_period(_comm_period)
+    { }
 
     std::string GetName() override;
+
+    bool SetParameter(std::string param, float value) override;
+
+    std::map<std::string, float> GetParameters() override;
     
 };
 
