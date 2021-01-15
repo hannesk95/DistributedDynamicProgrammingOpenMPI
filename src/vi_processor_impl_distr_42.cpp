@@ -30,6 +30,8 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
     float error = 0;
 
+    const int comm_period = 10;
+
     for(unsigned int t=0; t < max_iter; ++t)
     {
 
@@ -38,57 +40,66 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
         if(max_diff > error) error = max_diff;
 
-        // If we are running with a single process there is no partner
-        int partner_idx = -1;
 
-        if(world_size > 1)
+        if(t % comm_period == 0)
         { 
-            // Code for the multi-process case
-            
-            partner_idx = t % (world_size - 1);
+            // If we are running with a single process there is no partner
+            int partner_idx = -1;
 
-            std::vector<float> recv_buffer(J.size() / world_size + J.size() % world_size + 1);
-            if(recv_partner_ids[partner_idx] != world_size - 1)
+            if(world_size > 1)
             {
-                recv_buffer.resize(J.size() / world_size + 1);
+                // Code for the multi-process case
+
+                partner_idx = (t / comm_period) % (world_size - 1);
+
+                std::vector<float> recv_buffer(J.size() / world_size + (J.size() % world_size) + 1);
+                if(recv_partner_ids[partner_idx] != world_size - 1)
+                {
+                    recv_buffer.resize(J.size() / world_size + 1);
+                }
+
+                std::vector<float> send_buffer(process_last_state - process_first_state);
+                send_buffer.assign(J.data() + process_first_state, J.data() + process_last_state);
+                send_buffer.push_back(error);
+
+                int send_tag = (world_rank << 8 ) | send_partner_ids[partner_idx];
+                int recv_tag = (recv_partner_ids[partner_idx] << 8) | world_rank;
+
+                MPI_Status sendrecv_status;
+                MPI_Sendrecv(   send_buffer.data(),
+                                send_buffer.size(),
+                                MPI_FLOAT,
+                                send_partner_ids[partner_idx],
+                                send_tag,
+                                recv_buffer.data(),
+                                recv_buffer.size(),
+                                MPI_FLOAT,
+                                recv_partner_ids[partner_idx],
+                                recv_tag,
+                                MPI_COMM_WORLD,
+                                &sendrecv_status);
+
+                
+                float error_recv = recv_buffer.back();
+
+                if(error_recv > error) error = error_recv;
+
+                Eigen::Map<Eigen::VectorXf> J_recv(recv_buffer.data(), recv_buffer.size() - 1);
+                J.segment(recv_partner_ids[partner_idx] * (J.size() / world_size), J_recv.size()) = J_recv;
             }
-
-            std::vector<float> send_buffer(process_last_state - process_first_state);
-            send_buffer.assign(J.data() + process_first_state, J.data() + process_last_state);
-            send_buffer.push_back(error);
-
-            MPI_Status sendrecv_status;
-            MPI_Sendrecv(   send_buffer.data(),
-                            send_buffer.size(),
-                            MPI_FLOAT,
-                            send_partner_ids[partner_idx],
-                            0,
-                            recv_buffer.data(),
-                            recv_buffer.size(),
-                            MPI_FLOAT,
-                            recv_partner_ids[partner_idx],
-                            0,
-                            MPI_COMM_WORLD,
-                            &sendrecv_status);
-
-            float error_recv = recv_buffer.back();
-
-            if(error_recv > error) error = error_recv;
-
-            Eigen::Map<Eigen::VectorXf> J_recv(recv_buffer.data(), recv_buffer.size() - 1);
-            J.segment(recv_partner_ids[partner_idx] * (J.size() / world_size), J_recv.size()) = J_recv;
-        }
-
-
-        if(partner_idx == world_size - 2) 
-        {
-            if(error <= tolerance)
-            {   
-                debug_message("Converged after " + std::to_string(t) + " iterations");
-                break;
+            
+            
+            if(partner_idx == world_size - 2) 
+            {
+                if(error <= tolerance)
+                {   
+                    debug_message("Converged after " + std::to_string(t) + " iterations");
+                    break;
+                } 
+                error = 0;
             } 
-            error = 0;
-        } 
+
+        }
 
     }
 
