@@ -12,14 +12,16 @@ class VI_Processor_Impl_Local : public VI_Processor_Base
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
+        const unsigned int max_iter
     ) override;
 
     public:
 
-    VI_Processor_Impl_Local(const vi_processor_args_t& args, const int root_id)
+    VI_Processor_Impl_Local(const vi_data_args_t& args, const int root_id)
     : VI_Processor_Base(args, root_id)
     {}
+
+    std::string GetName() override;
 
 };
 

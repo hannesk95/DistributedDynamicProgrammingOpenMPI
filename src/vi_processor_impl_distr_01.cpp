@@ -2,12 +2,29 @@
 #include <limits>
 #include <mpi.h>
 
+bool VI_Processor_Impl_Distr_01::SetParameter(std::string param, float value)
+{
+    if(param == "comm_period")
+    {
+        comm_period = value;
+        return true;
+    }
+
+    return VI_Processor_Base::SetParameter(param, value);
+}
+
+std::map<std::string, float> VI_Processor_Impl_Distr_01::GetParameters()
+{
+    std::map<std::string, float> parameters = VI_Processor_Base::GetParameters();
+    parameters["comm_period"] = comm_period;
+    return parameters;
+}
 
 void VI_Processor_Impl_Distr_01::value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
+        const unsigned int max_iter
     )
 {
     int world_size, world_rank;
@@ -32,7 +49,7 @@ void VI_Processor_Impl_Distr_01::value_iteration_impl(
     // Keeps track of the change in J vector
     float error = 0;
 
-    for(unsigned int t=0; t < T; ++t)
+    for(unsigned int t=0; t < max_iter; ++t)
     {
         // Compute one value iteration step for a range of states
         float max_diff = iteration_step(Pi, J, P, process_first_state, process_last_state);
@@ -59,7 +76,7 @@ void VI_Processor_Impl_Distr_01::value_iteration_impl(
             MPI_Allreduce(&error, &error, 1, MPI_FLOAT, MPI_MAX, MPI_COMM_WORLD);
 
             // If convergence rate is below threshold stop
-            if(error <= e_max)
+            if(error <= tolerance)
             {
                 debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
                 break;
@@ -83,4 +100,9 @@ void VI_Processor_Impl_Distr_01::value_iteration_impl(
                 root_id, 
                 MPI_COMM_WORLD
     );
+}
+
+std::string VI_Processor_Impl_Distr_01::GetName()
+{
+    return VI_Processor_Base::GetName() + "-" + std::to_string(comm_period);
 }

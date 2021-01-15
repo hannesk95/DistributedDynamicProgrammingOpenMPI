@@ -4,8 +4,8 @@
 #include <omp.h>
 
 
-VI_Processor_Base::VI_Processor_Base(const vi_processor_args_t& args, const int _root_id, const float _alpha, const float _e_max)
-    : alpha(_alpha), e_max(_e_max), root_id(_root_id)
+VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha, const float _tolerance)
+    : alpha(_alpha), tolerance(_tolerance), root_id(_root_id)
 {
     // Load Parameters
     cnpy::NpyArray raw_fuel_capacity = cnpy::npz_load(args.Param_npz_dict_filename, "fuel_capacity");
@@ -16,9 +16,8 @@ VI_Processor_Base::VI_Processor_Base(const vi_processor_args_t& args, const int 
     cnpy::NpyArray raw_NS = cnpy::npz_load(args.Param_npz_dict_filename, "NS");
 
     // convert the content
-    f_max = raw_fuel_capacity.as_vec<int>()[0];
-    s_max = raw_number_stars.as_vec<int>()[0];
-    u_max = raw_max_controls.as_vec<int>()[0];
+    n_stars = raw_number_stars.as_vec<int>()[0];
+    n_states = raw_max_controls.as_vec<int>()[0];
 
     // Load Matrix
     cnpy::NpyArray raw_indptr = cnpy::npy_load(args.P_npy_indptr_filename);
@@ -38,27 +37,53 @@ VI_Processor_Base::VI_Processor_Base(const vi_processor_args_t& args, const int 
     Pi = std::move(std::unique_ptr<Eigen::VectorXi>(new Eigen::VectorXi(P_shape[1])));
 }
 
+bool VI_Processor_Base::SetParameter(std::string param, float value)
+{
+    if(param == "alpha")
+    {
+        alpha = value;
+        return true;
+    }
+    if(param == "tolerance")
+    {
+        tolerance = value;
+        return true;
+    }
+
+    return false;
+}
+
+std::map<std::string, float> VI_Processor_Base::GetParameters()
+{
+    std::map<std::string, float> parameters;
+    parameters["alpha"] = alpha;
+    parameters["tolerance"] = tolerance;
+    return parameters;
+}
 
 void VI_Processor_Base::debug_message(std::string msg)
 {
-        
     #ifdef VI_PROCESSOR_DEBUG
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     if(root_id == world_rank)
     {
-        std::cout << "[" << typeid(*this).name() << "]: " << msg << std::endl;
+        std::cout << "[" << GetName() << "]: " << msg << std::endl;
     }
     #endif
 }
 
+std::string VI_Processor_Base::GetName()
+{
+    return typeid(*this).name();
+}
 
-void VI_Processor_Base::Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int T)
+void VI_Processor_Base::Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter)
 {
     J.get()->fill(0);
     Pi.get()->fill(0);
 
-    value_iteration_impl(*Pi.get(), *J.get(), *P.get(), T);
+    value_iteration_impl(*Pi.get(), *J.get(), *P.get(), max_iter);
 
     Pi_out.assign(Pi.get()->data(), Pi.get()->data() + Pi.get()->size());
     J_out.assign(J.get()->data(), J.get()->data() + J.get()->size());
@@ -74,57 +99,54 @@ float VI_Processor_Base::iteration_step(
 {
     float error = 0;
 
-    #pragma omp parallel for
-    for(unsigned int s=process_first_state; s < process_last_state; ++s)
+    for(unsigned int state = process_first_state; state < process_last_state; ++state)
     {
 
         // Problem specific values
-        unsigned int f = s / (s_max*s_max);
-        unsigned int s_g = s % (s_max*s_max) / s_max;
-        unsigned int s_i = s % (s_max*s_max) % s_max;
+        unsigned int fuel = state / (n_stars*n_stars);
+        unsigned int goal_star = state % (n_stars*n_stars) / n_stars;
+        unsigned int current_star = state % (n_stars*n_stars) % n_stars;
 
         // Slice rows from P
-        const auto& P_s = P.innerVectors(s*u_max, u_max);
+        const auto& P_slice = P.innerVectors(state*n_states, n_states);
 
         // Storage for optimal action and corresponding cost
-        int u_min = 0;
-        float g_min = std::numeric_limits<float>::max();
+        int optimal_action = 0;
+        float optimal_cost = std::numeric_limits<float>::max();
                     
         // u is action
-        #pragma omp parallel for
-        for(int u=0; u < P_s.outerSize(); ++u)
+        for(int action = 0; action < P_slice.outerSize(); ++action)
         {
             // Iterate over columns of current row
-            Eigen::InnerIterator<typeof(P_s)> it(P_s, u);
-            if(it)
+            Eigen::InnerIterator<typeof(P_slice)> _iterator(P_slice, action);
+            if(_iterator)
             {
                 // Storage for action cost
-                float g_u = 0;
+                float cost_action = 0;
 
                 for(;;)
                 {
                     // If action is not defined for current state we will not end up in this loop!
 
                     // Cost for current action in current state
-                    float g = 0;
-                    if(s_g == s_i && u == 0) g = -100;
-                    else if(f == 0)          g = 100;
-                    else if(u != 0)          g = 5;
-                    else                     g = 0;
+                    float cost = 0;
+                    if(goal_star == current_star && action == 0) cost = -100;
+                    else if(fuel == 0)          cost = 100;
+                    else if(action != 0)          cost = 5;
 
                     // Accumulate possible actoin costs
-                    g_u += it.value() * (g + alpha*J[it.col()]);
+                    cost_action += _iterator.value() * (cost + alpha*J[_iterator.col()]);
 
                     // Next value
-                    if(!(++it))
+                    if(!(++_iterator))
                     {
                         // Reached end of row
                                     
                         // Check if current action is optimal
-                        if(g_u < g_min)
+                        if(cost_action < optimal_cost)
                         {
-                            g_min = g_u;
-                            u_min = u;
+                            optimal_cost = cost_action;
+                            optimal_action = action;
                         }
                         break;
                     }
@@ -134,12 +156,12 @@ float VI_Processor_Base::iteration_step(
         }
 
         // Calculate error
-        float err_tilde = std::abs(J[s] - g_min);
-        if(err_tilde > error) error = err_tilde;
+        float new_error = std::abs(J[state] - optimal_cost);
+        if(new_error > error) error = new_error;
 
         // Store new value and policy for current state
-        Pi[s] = u_min;
-        J[s] = g_min;                    
+        Pi[state] = optimal_action;
+        J[state] = optimal_cost;                    
 
     }
 

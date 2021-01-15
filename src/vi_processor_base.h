@@ -8,6 +8,7 @@
 
 #include <string>
 #include <memory>
+#include <map>
 #include <iostream>
 
 #define VI_PROCESSOR_DEBUG 
@@ -22,7 +23,7 @@ typedef struct {
     std::string P_npy_data_filename;
     std::string P_npy_shape_filename;
     std::string Param_npz_dict_filename;
-}vi_processor_args_t;
+}vi_data_args_t;
 
 typedef Eigen::SparseMatrix<float, Eigen::RowMajor> SpMat_t;
 
@@ -38,13 +39,13 @@ class VI_Processor_Base {
     /// \param Pi           Optimal policy will be stored in this vector
     /// \param J            Value for each state will be stored in this vector
     /// \param P            Transition probability matrix
-    /// \param T            Maximal number of iteration steps
+    /// \param max_iter            Maximal number of iteration steps
     ///
     virtual void value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int T
+        const unsigned int max_iter
     ) = 0;
 
     
@@ -56,8 +57,8 @@ class VI_Processor_Base {
     void debug_message(std::string msg);
 
 
-    const float alpha; // Discount factor
-    const float e_max; // Convergence limit    
+    float alpha; // Discount factor
+    float tolerance; // Convergence limit    
 
     ///
     /// \brief 
@@ -78,9 +79,8 @@ class VI_Processor_Base {
 
     private:    
 
-    unsigned int u_max; // Number of possible actions
-    unsigned int s_max; // Number of stars in navigation task
-    unsigned int f_max; // Maximal fuel level
+    unsigned int n_states; // Number of possible actions
+    unsigned int n_stars; // Number of stars in navigation task
 
     std::vector<int> P_indptr;
     std::vector<int> P_indices;
@@ -93,17 +93,38 @@ class VI_Processor_Base {
 
     public:
 
-    VI_Processor_Base(const vi_processor_args_t& args, const int _root_id, const float _alpha = 0.99, const float _e_max = 1e-10);
+    VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha = 0.99, const float _tolerance = 1e-10);
 
     ///
     /// \brief Process the data
     /// 
     /// \param Pi_out Vector in which optimal strategy for each state shall be stored (only usefull in root processor)
     /// \param J_out  Vector in which optimal cost for each state shall be stored (only usefull in root processor)
-    /// \param T      Maximal number of iteration steps
+    /// \param max_iter      Maximal number of iteration steps
     ///
-    void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int T = 10e6);
+    void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter = 10e6);
+    
+    ///
+    /// \brief Get the Name of the Processor
+    /// 
+    /// \return string 
+    ///
+    virtual std::string GetName();
 
+    ///
+    /// \brief Set the Parameters of processor
+    /// 
+    /// \param param Name of the parameter
+    /// \param value Value of the parameter
+    ///
+    virtual bool SetParameter(std::string param, float value);
+
+    ///
+    /// \brief Get the current Parameter values as key value pairs
+    /// 
+    /// \return std::map<std::string, float> 
+    ///
+    virtual std::map<std::string, float> GetParameters();
 };
 
 

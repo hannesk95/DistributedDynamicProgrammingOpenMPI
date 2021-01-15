@@ -1,10 +1,10 @@
-#ifndef __VI_PROCESSOR_IMPL_DISTR_01_H
-#define __VI_PROCESSOR_IMPL_DISTR_01_H
+#ifndef __VI_PROCESSOR_IMPL_DISTR_42_H
+#define __VI_PROCESSOR_IMPL_DISTR_42_H
 
 #include "vi_processor_base.h"
 
 
-class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
+class VI_Processor_Impl_Distr_42 : public VI_Processor_Base
 {
     protected:
 
@@ -21,20 +21,16 @@ class VI_Processor_Impl_Distr_01 : public VI_Processor_Base
 
     public:
 
-    VI_Processor_Impl_Distr_01(const vi_data_args_t& args, const int root_id, int _comm_period = 100)
+    VI_Processor_Impl_Distr_42(const vi_data_args_t& args, const int root_id, int _comm_period = 100)
     : VI_Processor_Base(args, root_id), comm_period(_comm_period)
-    {}
-
-    void SetCommPeriod(int comm_period)
-    {
-        this->comm_period = comm_period;
-    }
+    { }
 
     std::string GetName() override;
 
     bool SetParameter(std::string param, float value) override;
 
     std::map<std::string, float> GetParameters() override;
+    
 };
 
 
