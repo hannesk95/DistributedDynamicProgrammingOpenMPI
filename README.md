@@ -116,7 +116,7 @@ sudo dpkg -i openmpi-bin_2.1.1-8_amd64.deb
 
 - Versionen auf den Eikon Rechnern
     - `hpc01` - 2.2.1
-    - `hpc02` - 4.0.3
+    - `hpc02` - 2.2.1
     - `hpc03` - 2.2.1
     - `hpc04` - nicht erreichbar
     - `hpc05` - 2.2.1
