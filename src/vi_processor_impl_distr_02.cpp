@@ -94,6 +94,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
         }
     }
     // now merge policy accordingly to J
+    // Synchronize all processes to avoid race condition
     MPI_Barrier(MPI_COMM_WORLD);
     // all non-roots are sending to root
     if (world_rank != 0)
