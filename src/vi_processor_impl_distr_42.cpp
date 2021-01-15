@@ -30,7 +30,7 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
     float error = 0;
 
-    const int comm_period = 10;
+    const int comm_period = 1;
 
     for(unsigned int t=0; t < max_iter; ++t)
     {
