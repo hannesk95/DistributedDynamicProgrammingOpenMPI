@@ -4,7 +4,7 @@
 #include <omp.h>
 
 
-VI_Processor_Base::VI_Processor_Base(const vi_processor_args_t& args, const int _root_id, const float _alpha, const float _tolerance)
+VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha, const float _tolerance)
     : alpha(_alpha), tolerance(_tolerance), root_id(_root_id)
 {
     // Load Parameters
@@ -76,7 +76,6 @@ float VI_Processor_Base::iteration_step(
 {
     float error = 0;
 
-//    #pragma omp parallel for
     for(unsigned int state = process_first_state; state < process_last_state; ++state)
     {
 
@@ -93,7 +92,6 @@ float VI_Processor_Base::iteration_step(
         float optimal_cost = std::numeric_limits<float>::max();
                     
         // u is action
-//        #pragma omp parallel for
         for(int action = 0; action < P_slice.outerSize(); ++action)
         {
             // Iterate over columns of current row

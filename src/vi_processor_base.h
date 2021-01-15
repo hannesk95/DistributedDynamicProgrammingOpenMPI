@@ -22,7 +22,7 @@ typedef struct {
     std::string P_npy_data_filename;
     std::string P_npy_shape_filename;
     std::string Param_npz_dict_filename;
-}vi_processor_args_t;
+}vi_data_args_t;
 
 typedef Eigen::SparseMatrix<float, Eigen::RowMajor> SpMat_t;
 
@@ -92,7 +92,7 @@ class VI_Processor_Base {
 
     public:
 
-    VI_Processor_Base(const vi_processor_args_t& args, const int _root_id, const float _alpha = 0.99, const float _tolerance = 1e-10);
+    VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha = 0.99, const float _e_max = 1e-10);
 
     ///
     /// \brief Process the data
