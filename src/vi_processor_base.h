@@ -8,6 +8,7 @@
 
 #include <string>
 #include <memory>
+#include <map>
 #include <iostream>
 
 #define VI_PROCESSOR_DEBUG 
@@ -56,8 +57,8 @@ class VI_Processor_Base {
     void debug_message(std::string msg);
 
 
-    const float alpha; // Discount factor
-    const float tolerance; // Convergence limit    
+    float alpha; // Discount factor
+    float tolerance; // Convergence limit    
 
     ///
     /// \brief 
@@ -92,7 +93,7 @@ class VI_Processor_Base {
 
     public:
 
-    VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha = 0.99, const float _e_max = 1e-10);
+    VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha = 0.99, const float _tolerance = 1e-10);
 
     ///
     /// \brief Process the data
@@ -109,6 +110,21 @@ class VI_Processor_Base {
     /// \return string 
     ///
     virtual std::string GetName();
+
+    ///
+    /// \brief Set the Parameters of processor
+    /// 
+    /// \param param Name of the parameter
+    /// \param value Value of the parameter
+    ///
+    virtual bool SetParameter(std::string param, float value);
+
+    ///
+    /// \brief Get the current Parameter values as key value pairs
+    /// 
+    /// \return std::map<std::string, float> 
+    ///
+    virtual std::map<std::string, float> GetParameters();
 };
 
 

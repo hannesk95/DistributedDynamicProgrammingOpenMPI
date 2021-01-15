@@ -4,6 +4,24 @@
 #include <map>
 #include <mpi.h>
 
+bool VI_Processor_Impl_Distr_42::SetParameter(std::string param, float value)
+{
+    if(param == "comm_period")
+    {
+        comm_period = value;
+        return true;
+    }
+
+    return VI_Processor_Base::SetParameter(param, value);
+}
+
+std::map<std::string, float> VI_Processor_Impl_Distr_42::GetParameters()
+{
+    std::map<std::string, float> parameters = VI_Processor_Base::GetParameters();
+    parameters["comm_period"] = comm_period;
+    return parameters;
+}
+
 void VI_Processor_Impl_Distr_42::value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
@@ -29,8 +47,6 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
     } 
 
     float error = 0;
-
-    const int comm_period = 1;
 
     for(unsigned int t=0; t < max_iter; ++t)
     {
@@ -131,5 +147,5 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
 std::string VI_Processor_Impl_Distr_42::GetName()
 {
-    return VI_Processor_Base::GetName();
+    return VI_Processor_Base::GetName() + "-" + std::to_string(comm_period);;
 }

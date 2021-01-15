@@ -37,6 +37,29 @@ VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root
     Pi = std::move(std::unique_ptr<Eigen::VectorXi>(new Eigen::VectorXi(P_shape[1])));
 }
 
+bool VI_Processor_Base::SetParameter(std::string param, float value)
+{
+    if(param == "alpha")
+    {
+        alpha = value;
+        return true;
+    }
+    if(param == "tolerance")
+    {
+        tolerance = value;
+        return true;
+    }
+
+    return false;
+}
+
+std::map<std::string, float> VI_Processor_Base::GetParameters()
+{
+    std::map<std::string, float> parameters;
+    parameters["alpha"] = alpha;
+    parameters["tolerance"] = tolerance;
+    return parameters;
+}
 
 void VI_Processor_Base::debug_message(std::string msg)
 {
