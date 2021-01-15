@@ -49,7 +49,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
             if (world_rank != 0)
             {
                 float* J_raw = J.data();
-                MPI_Send(J_raw + process_first_state, process_last_state - process_first_state, MPI_FLOAT,  root_id, 0, MPI_COMM_WORLD); // MPI_ANY_TAG is only valid for recv
+                MPI_Send(J_raw + process_first_state, process_last_state - process_first_state, MPI_FLOAT,  root_id, 1, MPI_COMM_WORLD); // MPI_ANY_TAG is only valid for recv
             }
             // root receives
             else {
@@ -57,7 +57,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
                 for (int i = 0; i < world_size - 1; ++i) {
                     // find out who is sending! Wait for the first message that occurs
                     MPI_Status status;
-                    MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+                    MPI_Probe(MPI_ANY_SOURCE, 1, MPI_COMM_WORLD, &status);
                     int source_id = status.MPI_SOURCE;
                     // get payload size
                     auto payload_size = buffer_size;
@@ -66,7 +66,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
                         payload_size += remainder;
                     }
                     // now receive the sub vector into J receive buffer
-                    MPI_Recv(J_recv_buffer.data(), payload_size, MPI_FLOAT, source_id, MPI_ANY_TAG, MPI_COMM_WORLD,
+                    MPI_Recv(J_recv_buffer.data(), payload_size, MPI_FLOAT, source_id, 1, MPI_COMM_WORLD,
                              MPI_STATUS_IGNORE);
                     // Generate Eigen style vector of received data
                     Eigen::Map<Eigen::VectorXf> J_recv(J_recv_buffer.data(), payload_size);
@@ -94,13 +94,12 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
         }
     }
     // now merge policy accordingly to J
-    // Synchronize all processes to avoid race condition
-    MPI_Barrier(MPI_COMM_WORLD);
+    
     // all non-roots are sending to root
     if (world_rank != 0)
     {
         int* Pi_raw = Pi.data();
-        MPI_Send(Pi_raw + process_first_state, process_last_state - process_first_state, MPI_INT, root_id, 0, MPI_COMM_WORLD); // MPI_ANY_TAG is only valid for recv
+        MPI_Send(Pi_raw + process_first_state, process_last_state - process_first_state, MPI_INT, root_id, 2, MPI_COMM_WORLD); // MPI_ANY_TAG is only valid for recv
     }
     // root receives
     else
@@ -110,7 +109,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
         {
             // find out who is sending! Wait for the first message that occurs
             MPI_Status status;
-            MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+            MPI_Probe(MPI_ANY_SOURCE, 2, MPI_COMM_WORLD, &status);
             int source_id = status.MPI_SOURCE;
             // get payload size
             auto payload_size = buffer_size;
@@ -120,7 +119,7 @@ void VI_Processor_Impl_Distr_02::value_iteration_impl(
                 payload_size += remainder;
             }
             // now receive the sub vector into Pi receive buffer
-            MPI_Recv(Pi_recv_buffer.data(), payload_size, MPI_INT, source_id, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(Pi_recv_buffer.data(), payload_size, MPI_INT, source_id, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             // Generate Eigen style vector of received data
             Eigen::Map<Eigen::VectorXi> Pi_recv(Pi_recv_buffer.data(), payload_size);
             // update Pi

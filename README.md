@@ -5,8 +5,9 @@
 ## Kommmunikationsprotokolle zu evaluieren:
 
 - AllGather + AllReduce --> VI_Processor_Impl_Distr_01
-- Send + Receive (blocking)
+- Send + Receive (blocking) --> VI_Processor_Impl_Distr_02
 - Send + Receive (non-blocking)
+- SendRecv --> VI_Processor_Impl_Distr_42
 
 > <a href="https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf" target="_blank">`Princeton Bootcamp Kommunikationsprotokolle`</a>
 
