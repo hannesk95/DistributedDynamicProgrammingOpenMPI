@@ -37,7 +37,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
     if (world_size < 2)
     {
-        std::cerr << "World size must be greater than 1 for " << argv[0] << std::endl;
+        std::cerr << "World size must be greater than 1 for " << std::endl;
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
@@ -108,7 +108,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
                     int source_rank = status.MPI_SOURCE;
 
-                    MPI_Get_count(&status, MPI_FLOAT, processor_workload);
+                    //MPI_Get_count(&status, MPI_FLOAT, processor_workload);
 
                     if (source_rank == world_rank - 1)
                     {
