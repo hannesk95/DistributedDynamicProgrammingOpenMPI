@@ -35,6 +35,12 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     MPI_Error_Check(MPI_Comm_size(MPI_COMM_WORLD, &world_size));
     MPI_Error_Check(MPI_Comm_rank(MPI_COMM_WORLD, &world_rank));
 
+    if (world_size < 2)
+    {
+        std::cerr << "World size must be greater than 1 for " << argv[0] << std::endl;
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
+
     int request_complete = 0;   // Use if MPI_Test is used
 
     int processor_workload = ceil(J.size() / world_size);
@@ -93,12 +99,16 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
             {
                 for (int i = 0; i < world_size - 1; i++)
                 {
-                    MPI_Error_Check(MPI_Probe(MPI_ANY_SOURCE,
-                          1,
-                          MPI_COMM_WORLD,
-                          &status));
+                    MPI_Error_Check(
+                            MPI_Probe(MPI_ANY_SOURCE,
+                                    1,
+                                    MPI_COMM_WORLD,
+                                    &status)
+                                    );
 
                     int source_rank = status.MPI_SOURCE;
+
+                    MPI_Get_count(&status, MPI_FLOAT, processor_workload);
 
                     if (source_rank == world_rank - 1)
                     {
@@ -139,6 +149,9 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     J.segment(source_rank * processor_workload, processor_workload) = J_merged;
                 }
             }
+            else throw std::runtime_error("Something strange happened!");
+
+            MPI_Barrier(MPI_COMM_WORLD); // Is this really needed?
                 
             MPI_Error_Check(MPI_Ibcast(&error, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD, &request));
 
@@ -147,8 +160,6 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
             ///////////////////////////////////////////////
 
             MPI_Error_Check(MPI_Wait(&request, &status));
-
-            //MPI_Error_Check(MPI_Bcast(&error, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD));
 
             // If convergence criteria is reached -> terminate
             if(error <= tolerance)
