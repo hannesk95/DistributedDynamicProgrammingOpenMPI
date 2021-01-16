@@ -46,9 +46,17 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
     int processor_end = processor_workload * (world_rank +1);
 
     std::vector<float> J_new(J.size());
-
+    std::vector<float> J_temp(0);
     Eigen::VectorXf J_tempp(J.size());
     J_tempp = J.segment(0, J.size());
+
+    for(int i = 0; i < J.size(); i++)
+    {
+        J_temp.push_back(J[i]);
+    }
+
+    MPI_Request request;
+    MPI_Status status;
 
     std::vector<int> recvcounts;
     std::vector<int> displs;
@@ -78,7 +86,7 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
 
             if(world_rank == root_id)
             {
-                MPI_Gatherv(&J_raw[processor_start],
+                MPI_Igatherv(&J_raw[processor_start],
                             processor_workload,
                             MPI_FLOAT,
                             J_raw,
@@ -86,9 +94,11 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
                             displs.data(),
                             MPI_FLOAT,
                             root_id,
-                            MPI_COMM_WORLD);
+                            MPI_COMM_WORLD,
+                            &request);
 
                 Eigen::Map<Eigen::VectorXf> J_final(J_raw, J.size());
+                //Eigen::Map<Eigen::VectorXf> J_store(J_temp.data(), J.size());
 
                 auto deviation = (J_tempp-J_final).cwiseAbs().maxCoeff();
 
@@ -98,7 +108,14 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
                     break;
                 }
 
+                //J_temp.resize(0);
+
                 J_tempp = J.segment(0, J.size());
+
+//                for(int i = 0; i < J.size(); i++)
+//                {
+//                    J_temp.push_back(J[i]);
+//                }
             }
         }
     }
