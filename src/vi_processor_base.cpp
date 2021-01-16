@@ -101,9 +101,6 @@ float VI_Processor_Base::iteration_step(
 
     #pragma omp parallel
     {
-        // Local copy of J for each thread
-        Eigen::VectorXf local_J = J;
-
         #pragma omp for
         for(unsigned int state = process_first_state; state < process_last_state; ++state)
         {
@@ -141,7 +138,12 @@ float VI_Processor_Base::iteration_step(
                         else if(action != 0)                         cost = 5;
 
                         // Accumulate possible actoin costs
-                        cost_action += _iterator.value() * (cost + alpha*local_J[_iterator.col()]);
+                        float J_value = 0;
+                        #pragma omp critical
+                        {
+                            J_value = J[_iterator.col()];
+                        }
+                        cost_action += _iterator.value() * (cost + alpha*J_value);
 
                         // Next value
                         if(!(++_iterator))
@@ -161,15 +163,17 @@ float VI_Processor_Base::iteration_step(
                 }
             }
 
-            // Calculate error
-            float new_error = std::abs(local_J[state] - optimal_cost);
-
-            // Store new value and policy for current state
-            Pi[state] = optimal_action;
-            J[state] = optimal_cost;        
-
             #pragma omp critical
-            if(new_error > error) error = new_error;            
+            {
+                // Calculate error
+                float new_error = std::abs(J[state] - optimal_cost);
+                
+                // Store new value and policy for current state
+                Pi[state] = optimal_action;
+                J[state] = optimal_cost; 
+
+                if(new_error > error) error = new_error;  
+            }          
 
         }
     }
