@@ -34,6 +34,13 @@ run_mpi_local: remove_build_directories
 	cd build/ && mpirun -np 2 --host localhost,localhost ./MPI_Project.exe
 	# cd .. && python3 benchmark_visual.py
 
+run_mpi_distr: remove_build_directories
+	mkdir -p build/
+	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
+	$(MAKE) -C build/
+	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
+	# cd .. && python3 benchmark_visual.py
+
 # makes sure that "parameters.pickle" is converted to "parameters.npy"
 convert_pickle:
 	cd data/ && python3 convert_pickle.py

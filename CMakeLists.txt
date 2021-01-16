@@ -70,7 +70,7 @@ include_directories(${MPI_INCLUDE_PATH}
 
 # Create executable as usual
 file(GLOB SRC_FILES src/*.cpp main.cpp)
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES} src/vi_processor_impl_distr_05.cpp src/vi_processor_impl_distr_05.h)
 
 #add_dependencies(${PROJECT_NAME} boost)
 target_link_libraries(${PROJECT_NAME} 
