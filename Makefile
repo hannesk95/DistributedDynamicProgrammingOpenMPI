@@ -27,6 +27,13 @@ compile: remove_build_directories convert_pickle
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
 
+run_mpi: remove_build_directories
+	mkdir -p build/
+	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
+	$(MAKE) -C build/
+	cd build
+	mpirun -np --host localhost,localhost ./MPI_Project.exe
+
 # makes sure that "parameters.pickle" is converted to "parameters.npy"
 convert_pickle:
 	cd data/ && python3 convert_pickle.py
