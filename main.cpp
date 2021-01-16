@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_04(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_04(args, 0, comm_period)));
 
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0)));
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
@@ -63,9 +63,17 @@ int main(int argc, char *argv[])
             std::vector<int> Pi_vec;
             std::vector<float> J_vec;
 
+            // double start_time = MPI_Wtime();
+
             auto t0 = std::chrono::system_clock::now();
             processors[j].get()->Process(Pi_vec, J_vec);
             auto t1 = std::chrono::system_clock::now();
+
+
+            // double final_time = MPI_Wtime();
+            // MPI_Reduce(&time_in_sec, &final_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+
+            // double time_in_sec = final_time - start_time;
 
             float time_in_sec = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count() / 1e6;
             measurements.coeffRef(i,j) = time_in_sec;
