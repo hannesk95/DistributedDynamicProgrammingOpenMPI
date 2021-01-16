@@ -1,7 +1,7 @@
 #include "vi_processor_impl_distr_05.h"
 #include <limits>
 #include <mpi.h>
-#include <math.h>
+
 
 #define MPI_Error_Check(x) {const int err=x; if(x!=MPI_SUCCESS) { fprintf(stderr, "MPI ERROR %d at %d.", err, __LINE__);}}
 
@@ -45,15 +45,9 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
     int processor_start = processor_workload * world_rank;
     int processor_end = processor_workload * (world_rank +1);
 
-    std::vector<float> J_new(J.size());
-    std::vector<float> J_temp(0);
-    Eigen::VectorXf J_tempp(J.size());
-    J_tempp = J.segment(0, J.size());
 
-    for(int i = 0; i < J.size(); i++)
-    {
-        J_temp.push_back(J[i]);
-    }
+    Eigen::VectorXf J_buffer(J.size());
+    J_buffer = J.segment(0, J.size());
 
     MPI_Request request;
     MPI_Status status;
@@ -84,8 +78,8 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
         {
             float* J_raw = J.data();
 
-            if(world_rank == root_id)
-            {
+            //if(world_rank == root_id)
+            //{
                 MPI_Igatherv(&J_raw[processor_start],
                             processor_workload,
                             MPI_FLOAT,
@@ -97,10 +91,15 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
                             MPI_COMM_WORLD,
                             &request);
 
-                Eigen::Map<Eigen::VectorXf> J_final(J_raw, J.size());
-                //Eigen::Map<Eigen::VectorXf> J_store(J_temp.data(), J.size());
+                ////////////////////////////////////////////////////
+                // Do some additional computations here if needed //
+                ////////////////////////////////////////////////////
 
-                auto deviation = (J_tempp-J_final).cwiseAbs().maxCoeff();
+                MPI_Wait(&request, &status);
+
+                Eigen::Map<Eigen::VectorXf> J_final(J_raw, J.size());
+
+                float deviation = (J_buffer-J_final).cwiseAbs().maxCoeff();
 
                 if(deviation <= tolerance)
                 {
@@ -108,15 +107,8 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
                     break;
                 }
 
-                //J_temp.resize(0);
-
-                J_tempp = J.segment(0, J.size());
-
-//                for(int i = 0; i < J.size(); i++)
-//                {
-//                    J_temp.push_back(J[i]);
-//                }
-            }
+                J_buffer = J.segment(0, J.size());
+            //}
         }
     }
 
@@ -135,7 +127,9 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
                  MPI_COMM_WORLD,
                  &request_gather);
 
-    // Do some other work here if needed
+    ////////////////////////////////////////////////////
+    // Do some additional computations here if needed //
+    ////////////////////////////////////////////////////
 
     MPI_Wait(&request_gather, &status_gather);
 }
