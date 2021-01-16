@@ -32,7 +32,8 @@ run_mpi: remove_build_directories
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
 	cd build
-	mpirun -np --host localhost,localhost ./MPI_Project.exe
+	mpirun -np 2 --host localhost,localhost ./MPI_Project.exe
+	# cd .. && python3 benchmark_visual.py
 
 # makes sure that "parameters.pickle" is converted to "parameters.npy"
 convert_pickle:
