@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
     Eigen::Map<Eigen::VectorXi> Pi_star(Pi_star_vec.data(), Pi_star_vec.size());
 
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
 //    for(const int& comm_period : comm_periods)
 //        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
