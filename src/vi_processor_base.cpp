@@ -99,70 +99,79 @@ float VI_Processor_Base::iteration_step(
 {
     float error = 0;
 
-    for(unsigned int state = process_first_state; state < process_last_state; ++state)
+    #pragma omp parallel
     {
+        // Local copy of J for each thread
+        Eigen::VectorXf local_J = J;
 
-        // Problem specific values
-        unsigned int fuel = state / (n_stars*n_stars);
-        unsigned int goal_star = state % (n_stars*n_stars) / n_stars;
-        unsigned int current_star = state % (n_stars*n_stars) % n_stars;
-
-        // Slice rows from P
-        const auto& P_slice = P.innerVectors(state*n_states, n_states);
-
-        // Storage for optimal action and corresponding cost
-        int optimal_action = 0;
-        float optimal_cost = std::numeric_limits<float>::max();
-                    
-        // u is action
-        for(int action = 0; action < P_slice.outerSize(); ++action)
+        #pragma omp for
+        for(unsigned int state = process_first_state; state < process_last_state; ++state)
         {
-            // Iterate over columns of current row
-            Eigen::InnerIterator<typeof(P_slice)> _iterator(P_slice, action);
-            if(_iterator)
+
+            // Problem specific values
+            unsigned int fuel = state / (n_stars*n_stars);
+            unsigned int goal_star = state % (n_stars*n_stars) / n_stars;
+            unsigned int current_star = state % (n_stars*n_stars) % n_stars;
+
+            // Slice rows from P
+            const auto& P_slice = P.innerVectors(state*n_states, n_states);
+
+            // Storage for optimal action and corresponding cost
+            int optimal_action = 0;
+            float optimal_cost = std::numeric_limits<float>::max();
+                        
+            // u is action
+            for(int action = 0; action < P_slice.outerSize(); ++action)
             {
-                // Storage for action cost
-                float cost_action = 0;
-
-                for(;;)
+                // Iterate over columns of current row
+                Eigen::InnerIterator<typeof(P_slice)> _iterator(P_slice, action);
+                if(_iterator)
                 {
-                    // If action is not defined for current state we will not end up in this loop!
+                    // Storage for action cost
+                    float cost_action = 0;
 
-                    // Cost for current action in current state
-                    float cost = 0;
-                    if(goal_star == current_star && action == 0) cost = -100;
-                    else if(fuel == 0)          cost = 100;
-                    else if(action != 0)          cost = 5;
-
-                    // Accumulate possible actoin costs
-                    cost_action += _iterator.value() * (cost + alpha*J[_iterator.col()]);
-
-                    // Next value
-                    if(!(++_iterator))
+                    for(;;)
                     {
-                        // Reached end of row
-                                    
-                        // Check if current action is optimal
-                        if(cost_action < optimal_cost)
+                        // If action is not defined for current state we will not end up in this loop!
+
+                        // Cost for current action in current state
+                        float cost = 0;
+                        if(goal_star == current_star && action == 0) cost = -100;
+                        else if(fuel == 0)                           cost = 100;
+                        else if(action != 0)                         cost = 5;
+
+                        // Accumulate possible actoin costs
+                        cost_action += _iterator.value() * (cost + alpha*local_J[_iterator.col()]);
+
+                        // Next value
+                        if(!(++_iterator))
                         {
-                            optimal_cost = cost_action;
-                            optimal_action = action;
+                            // Reached end of row
+                                        
+                            // Check if current action is optimal
+                            if(cost_action < optimal_cost)
+                            {
+                                optimal_cost = cost_action;
+                                optimal_action = action;
+                            }
+                            break;
                         }
-                        break;
+                                    
                     }
-                                
                 }
             }
+
+            // Calculate error
+            float new_error = std::abs(local_J[state] - optimal_cost);
+
+            // Store new value and policy for current state
+            Pi[state] = optimal_action;
+            J[state] = optimal_cost;        
+
+            #pragma omp critical
+            if(new_error > error) error = new_error;            
+
         }
-
-        // Calculate error
-        float new_error = std::abs(J[state] - optimal_cost);
-        if(new_error > error) error = new_error;
-
-        // Store new value and policy for current state
-        Pi[state] = optimal_action;
-        J[state] = optimal_cost;                    
-
     }
 
     return error;
