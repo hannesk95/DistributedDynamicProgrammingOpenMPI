@@ -35,11 +35,11 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     MPI_Error_Check(MPI_Comm_size(MPI_COMM_WORLD, &world_size));
     MPI_Error_Check(MPI_Comm_rank(MPI_COMM_WORLD, &world_rank));
 
-    if (world_size < 2)
-    {
-        std::cerr << "World size must be greater than 1 for " << std::endl;
-        MPI_Abort(MPI_COMM_WORLD, 1);
-    }
+//    if (world_size < 2)
+//    {
+//        std::cerr << "World size must be greater than 1 for " << std::endl;
+//        MPI_Abort(MPI_COMM_WORLD, 1);
+//    }
 
     int request_complete = 0;   // Use if MPI_Test is used
 
@@ -128,7 +128,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     ///////////////////////////////////////////////
 
                     // Blocks and waits for destination process to receive data
-                    MPI_Error_Check(MPI_Wait(&request, &status));
+                    // MPI_Error_Check(MPI_Wait(&request, &status));
 
                     // Tests for completion of send or receive, itself is non-blocking
                     // MPI_Test()
@@ -147,6 +147,8 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     }
 
                     J.segment(source_rank * processor_workload, processor_workload) = J_merged;
+                    MPI_Error_Check(MPI_Wait(&request, &status));
+
                 }
             }
             else throw std::runtime_error("Something strange happened!");
@@ -159,7 +161,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
             // Do some other computations here if needed //
             ///////////////////////////////////////////////
 
-            MPI_Error_Check(MPI_Wait(&request, &status));
+            // MPI_Error_Check(MPI_Wait(&request, &status));
 
             // If convergence criteria is reached -> terminate
             if(error <= tolerance)
@@ -167,6 +169,8 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                 debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
                 break;
             }
+
+            MPI_Error_Check(MPI_Wait(&request, &status));
 
             MPI_Error_Check(MPI_Ibcast(J.data(), J.size(), MPI_FLOAT, root_id, MPI_COMM_WORLD, &request));
 
@@ -179,8 +183,6 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
             error = 0;
         }
     }
-
-
 
     std::vector<int> recvcounts;
     std::vector<int> displs;
@@ -213,7 +215,9 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
             MPI_COMM_WORLD,
             &request_gather);
 
-    // Do some other work here if needed
+    ///////////////////////////////////////////////
+    // Do some other computations here if needed //
+    ///////////////////////////////////////////////
 
     MPI_Wait(&request_gather, &status_gather);
 }
