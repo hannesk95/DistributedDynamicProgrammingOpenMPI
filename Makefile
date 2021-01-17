@@ -27,19 +27,28 @@ compile: remove_build_directories convert_pickle
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
 
+run: remove_build_directories convert_pickle
+	mkdir -p build/
+	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
+	$(MAKE) -C build/
+	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
+	cd .. && visual_benchmark
+
 run_mpi_local: remove_build_directories
 	mkdir -p build/
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
 	cd build/ && mpirun -np 2 --host localhost,localhost ./MPI_Project.exe
-	# cd .. && python3 benchmark_visual.py
 
 run_mpi_distr: remove_build_directories
 	mkdir -p build/
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
 	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
-	# cd .. && python3 benchmark_visual.py
+
+# visualize results
+visual_benchmark:
+	python3 benchmark_visual.py
 
 # makes sure that "parameters.pickle" is converted to "parameters.npy"
 convert_pickle:
