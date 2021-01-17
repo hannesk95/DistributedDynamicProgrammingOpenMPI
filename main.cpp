@@ -44,10 +44,10 @@ int main(int argc, char *argv[])
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
-        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_05(args, 0, comm_period)));
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
+    //for(const int& comm_period : comm_periods)
+        //processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_05(args, 0, comm_period)));
 
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0)));
     processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
