@@ -189,15 +189,17 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
     for(int i=0; i < world_size; ++i)
     {
-        if(i+1 < world_size)
-            recvcounts.push_back(processor_workload);
-        else
-            recvcounts.push_back(processor_workload_last);
+        if(i == world_size - 1)
+        {
+            recvcounts.push_back(J.size() % processor_workload);
+            displs.push_back(i*processor_workload);
+        }
 
-        if(i == 0)
-            displs.push_back(0);
         else
-            displs.push_back(displs[i-1] + recvcounts[i-1]);
+        {
+            recvcounts.push_back(processor_workload);
+            displs.push_back(i*processor_workload);
+        }
     }
 
     int* Pi_raw = Pi.data();
