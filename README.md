@@ -146,7 +146,7 @@ Host *
 In unten stehender Grafik ist ein Benchmark Vergleich über alle implementierten Kommunikationsprotokolle zu sehen.
 
 <h2 align="center">
-  <img src="results/benchmark_distr.png" alt="resulting barnsley fern" width="600px" />
+  <img src="results/benchmark_distr.png" alt="resulting barnsley fern" width="800px" />
 </h2>
 
 ---
