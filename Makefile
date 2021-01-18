@@ -27,23 +27,14 @@ compile: remove_build_directories convert_pickle
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/
 
-run: remove_build_directories convert_pickle
-	mkdir -p build/
-	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
-	$(MAKE) -C build/
+run: compile
 	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
 	cd .. && visual_benchmark
 
-run_mpi_local: remove_build_directories
-	mkdir -p build/
-	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
-	$(MAKE) -C build/
+run_mpi_local: compile
 	cd build/ && mpirun -np 2 --host localhost,localhost ./MPI_Project.exe
 
-run_mpi_distr: remove_build_directories
-	mkdir -p build/
-	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
-	$(MAKE) -C build/
+run_mpi_distr: compile
 	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
 
 # visualize results
