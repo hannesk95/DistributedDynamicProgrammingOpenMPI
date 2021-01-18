@@ -32,7 +32,7 @@ run: compile
 	cd .. && visual_benchmark
 
 run_mpi_local: compile
-	cd build/ && mpirun -np 2 --host localhost,localhost ./MPI_Project.exe
+	cd build/ && mpirun -np 2 ./MPI_Project.exe
 
 run_mpi_distr: compile
 	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
