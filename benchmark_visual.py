@@ -67,10 +67,10 @@ def plot_benchmark_distr(data):
     plt.rcParams['xtick.labelsize']=16
     plt.rcParams['ytick.labelsize']=16
     rects1 = ax.bar(x - 0.25, times[list(times.keys())[0]].values(), width, label='Scheme: ' + list(times.keys())[0])
-    rects2 = ax.bar(x + 0.125, times[list(times.keys())[1]].values(), width, label='Scheme: ' + list(times.keys())[1])
-    rects3 = ax.bar(x - 0.125, times[list(times.keys())[2]].values(), width, label='Scheme: ' + list(times.keys())[2])
+    rects2 = ax.bar(x + 0.12, times[list(times.keys())[1]].values(), width, label='Scheme: ' + list(times.keys())[1])
+    rects3 = ax.bar(x - 0.12, times[list(times.keys())[2]].values(), width, label='Scheme: ' + list(times.keys())[2])
     rects4 = ax.bar(x + 0.25, times[list(times.keys())[3]].values(), width, label='Scheme: ' + list(times.keys())[3])
-    rects4 = ax.bar(x + 0.00, times[list(times.keys())[3]].values(), width, label='Scheme: ' + list(times.keys())[4])
+    rects5 = ax.bar(x + 0.00, times[list(times.keys())[4]].values(), width, label='Scheme: ' + list(times.keys())[4])
     
     ax.set_ylabel('Mean execution time (in seconds)', fontsize=16)
     ax.set_title('Benchmark comparison among communication schemes', fontsize=20)
@@ -84,6 +84,7 @@ def plot_benchmark_distr(data):
     autolabel(ax, rects2)
     autolabel(ax, rects3)
     autolabel(ax, rects4)
+    autolabel(ax, rects5)
     
     fig.tight_layout()
     plt.grid()
