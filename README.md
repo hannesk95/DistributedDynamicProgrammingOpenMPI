@@ -111,17 +111,31 @@ git pull origin master
 git checkout master
 ```
 
-Dann kann das Projekt kompiliert und ausgeführt werden via:
+Dann kann das Projekt kompiliert und ausgeführt werden. Hierfür gibt es mehrere Möglichkeiten:
 
 ```text
-# Kompilieren
-make compile
+1.  
 
-# In build Ordner wechseln
-cd build
+1.1 # Kompilieren
+    make compile
 
-# Ausführen
-mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
+1.2 # In build Ordner wechseln
+    cd build
+
+1.3 # Ausführen (verteiltes rechnen auf mehrern PC's)
+    mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
+
+--------------------------------------------------------
+
+2.  # Kompilieren und ausführen 
+    # (lokales rechnen auf Localhost, 2 Prozesse)
+    make run_mpi_local
+
+--------------------------------------------------------
+
+3.  # Kompilieren und ausführen 
+    # (verteiltes rechnen auf mehreren PC's)
+    make run_mpi_distr
 ```
 
 Hinweis: Überprüfe, ob die `~/.ssh/config` richtig ist:
