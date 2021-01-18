@@ -93,18 +93,16 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                 ///////////////////////////////////////////////
 
                 MPI_Error_Check(MPI_Wait(&request, &status));
-            }          
+            }
 
             else if ( world_rank == root_id)
             {
                 for (int i = 0; i < world_size - 1; i++)
                 {
-                    MPI_Error_Check(
-                            MPI_Probe(MPI_ANY_SOURCE,
+                    MPI_Error_Check(MPI_Probe(MPI_ANY_SOURCE,
                                     1,
                                     MPI_COMM_WORLD,
-                                    &status)
-                                    );
+                                    &status));
 
                     int source_rank = status.MPI_SOURCE;
 
@@ -148,7 +146,6 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
                     J.segment(source_rank * processor_workload, processor_workload) = J_merged;
                     MPI_Error_Check(MPI_Wait(&request, &status));
-
                 }
             }
             else throw std::runtime_error("Something strange happened!");
@@ -161,7 +158,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
             // Do some other computations here if needed //
             ///////////////////////////////////////////////
 
-            // MPI_Error_Check(MPI_Wait(&request, &status));
+            MPI_Error_Check(MPI_Wait(&request, &status));
 
             // If convergence criteria is reached -> terminate
             if(error <= tolerance)
@@ -169,8 +166,6 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                 debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
                 break;
             }
-
-            MPI_Error_Check(MPI_Wait(&request, &status));
 
             MPI_Error_Check(MPI_Ibcast(J.data(), J.size(), MPI_FLOAT, root_id, MPI_COMM_WORLD, &request));
 
@@ -184,44 +179,44 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
         }
     }
 
-    std::vector<int> recvcounts;
-    std::vector<int> displs;
-
-    for(int i=0; i < world_size; ++i)
-    {
-        if(i == world_size - 1)
-        {
-            recvcounts.push_back(J.size() % processor_workload);
-            displs.push_back(i*processor_workload);
-        }
-
-        else
-        {
-            recvcounts.push_back(processor_workload);
-            displs.push_back(i*processor_workload);
-        }
-    }
-
-    int* Pi_raw = Pi.data();
-    MPI_Status status_gather;
-    MPI_Request request_gather;
-
-    MPI_Igatherv(&Pi_raw[processor_start],
-            processor_workload,
-            MPI_INT,
-            Pi_raw,
-            recvcounts.data(),
-            displs.data(),
-            MPI_INT,
-            root_id,
-            MPI_COMM_WORLD,
-            &request_gather);
-
-    ///////////////////////////////////////////////
-    // Do some other computations here if needed //
-    ///////////////////////////////////////////////
-
-    MPI_Wait(&request_gather, &status_gather);
+//    std::vector<int> recvcounts;
+//    std::vector<int> displs;
+//
+//    for(int i=0; i < world_size; ++i)
+//    {
+//        if(i == world_size - 1)
+//        {
+//            recvcounts.push_back(J.size() % processor_workload);
+//            displs.push_back(i*processor_workload);
+//        }
+//
+//        else
+//        {
+//            recvcounts.push_back(processor_workload);
+//            displs.push_back(i*processor_workload);
+//        }
+//    }
+//
+//    int* Pi_raw = Pi.data();
+//    MPI_Status status_gather;
+//    MPI_Request request_gather;
+//
+//    MPI_Igatherv(&Pi_raw[processor_start],
+//            processor_workload,
+//            MPI_INT,
+//            Pi_raw,
+//            recvcounts.data(),
+//            displs.data(),
+//            MPI_INT,
+//            root_id,
+//            MPI_COMM_WORLD,
+//            &request_gather);
+//
+//    ///////////////////////////////////////////////
+//    // Do some other computations here if needed //
+//    ///////////////////////////////////////////////
+//
+//    MPI_Wait(&request_gather, &status_gather);
 }
 
 std::string VI_Processor_Impl_Distr_04::GetName()
