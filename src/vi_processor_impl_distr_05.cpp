@@ -32,8 +32,8 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
         const unsigned int T)
 {
     int world_size, world_rank;
-    MPI_Error_Check(MPI_Comm_size(MPI_COMM_WORLD, &world_size));
-    MPI_Error_Check(MPI_Comm_rank(MPI_COMM_WORLD, &world_rank));
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
 //    if (world_size < 2)
 //    {
@@ -46,28 +46,39 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
     int processor_end = processor_workload * (world_rank +1);
 
 
-    Eigen::VectorXf J_buffer(J.size());
-    J_buffer = J.segment(0, J.size());
+    Eigen::VectorXf J_buffer(0);
+    J_buffer = J.segment(0, 125);
 
     MPI_Request request;
     MPI_Status status;
 
-    std::vector<int> recvcounts;
-    std::vector<int> displs;
+//    std::vector<int> recvcounts;
+//    std::vector<int> displs;
+//
+//    for(int i=0; i < world_size; ++i)
+//    {
+//        if(i == world_size - 1)
+//        {
+//            recvcounts.push_back(J.size() % processor_workload);
+//            displs.push_back(i*processor_workload);
+//        }
+//
+//        else
+//        {
+//            recvcounts.push_back(processor_workload);
+//            displs.push_back(i*processor_workload);
+//        }
+//    }
 
+    std::vector<int> recvcounts;    // Number of states for each process
+    std::vector<int> displs;        // Displacement of sub vectors for each process
     for(int i=0; i < world_size; ++i)
     {
-        if(i == world_size - 1)
-        {
-            recvcounts.push_back(J.size() % processor_workload);
-            displs.push_back(i*processor_workload);
-        }
+        if(i+1 < world_size) recvcounts.push_back((J.size() / world_size));
+        else recvcounts.push_back((J.size() / world_size) + J.size() % world_size);
 
-        else
-        {
-            recvcounts.push_back(processor_workload);
-            displs.push_back(i*processor_workload);
-        }
+        if(i == 0) displs.push_back(0);
+        else displs.push_back(displs[i-1] + recvcounts[i-1]);
     }
 
     for(unsigned int t=0; t < T; ++t)
@@ -78,37 +89,44 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
         {
             float* J_raw = J.data();
 
-            //if(world_rank == root_id)
-            //{
-                MPI_Igatherv(&J_raw[processor_start],
-                            processor_workload,
-                            MPI_FLOAT,
-                            J_raw,
-                            recvcounts.data(),
-                            displs.data(),
-                            MPI_FLOAT,
-                            root_id,
-                            MPI_COMM_WORLD,
-                            &request);
+            MPI_Igatherv(&J_raw[processor_start],
+                        processor_workload,
+                        MPI_FLOAT,
+                        J_raw,
+                        recvcounts.data(),
+                        displs.data(),
+                        MPI_FLOAT,
+                        root_id,
+                        MPI_COMM_WORLD,
+                        &request);
 
-                ////////////////////////////////////////////////////
-                // Do some additional computations here if needed //
-                ////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////
+            // Do some additional computations here if needed //
+            ////////////////////////////////////////////////////
 
-                MPI_Wait(&request, &status);
+            Eigen::Map<Eigen::VectorXf> J_final(J_raw, 125);
+            //Eigen::Map<Eigen::VectorXf> J(J_raw, J_buffer.size());
 
-                Eigen::Map<Eigen::VectorXf> J_final(J_raw, J.size());
+            float deviation = (J_buffer-J_final).cwiseAbs().maxCoeff();
 
-                float deviation = (J_buffer-J_final).cwiseAbs().maxCoeff();
+            MPI_Bcast(&deviation, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD);
 
-                if(deviation <= tolerance)
-                {
-                    debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
-                    break;
-                }
+            if(deviation <= tolerance)
+            {
+                debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
+                break;
+            }
 
-                J_buffer = J.segment(0, J.size());
-            //}
+            J = J_final.segment(0, 125);
+
+            MPI_Bcast(J.data(), 125, MPI_FLOAT, root_id, MPI_COMM_WORLD);
+
+            MPI_Error_Check(MPI_Wait(&request, &status));
+
+            J_buffer.resize(0);
+
+            J_buffer = J.segment(0, 125);
+
         }
     }
 
@@ -116,7 +134,7 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
     MPI_Status status_gather;
     MPI_Request request_gather;
 
-    MPI_Igatherv(&Pi_raw[processor_start],
+    MPI_Gatherv(&Pi_raw[processor_start],
                  processor_workload,
                  MPI_INT,
                  Pi_raw,
@@ -124,14 +142,14 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
                  displs.data(),
                  MPI_INT,
                  root_id,
-                 MPI_COMM_WORLD,
-                 &request_gather);
+                 MPI_COMM_WORLD);
+                 //&request_gather);
 
     ////////////////////////////////////////////////////
     // Do some additional computations here if needed //
     ////////////////////////////////////////////////////
 
-    MPI_Wait(&request_gather, &status_gather);
+    //MPI_Error_Check(MPI_Wait(&request_gather, &status_gather));
 }
 
 std::string VI_Processor_Impl_Distr_05::GetName()
