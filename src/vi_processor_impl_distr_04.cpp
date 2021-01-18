@@ -35,33 +35,21 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     MPI_Error_Check(MPI_Comm_size(MPI_COMM_WORLD, &world_size));
     MPI_Error_Check(MPI_Comm_rank(MPI_COMM_WORLD, &world_rank));
 
-//    if (world_size < 2)
-//    {
-//        std::cerr << "World size must be greater than 1 for " << std::endl;
-//        MPI_Abort(MPI_COMM_WORLD, 1);
-//    }
-
-    int request_complete = 0;   // Use if MPI_Test is used
-
     MPI_Status status;
     MPI_Request request;
 
     int processor_workload = ceil(J.size() / world_size);
-    int processor_workload_last = processor_workload + (J.size() % world_size);
+    int processor_workload_last = J.size() % world_size;
     int processor_start = processor_workload * world_rank;
     int processor_end = processor_workload * (world_rank +1);
 
-    // Eigen::VectorXf J_processor(0);
-    // Eigen::VectorXf Pi_processor(0);
-    std::vector<float> J_processor(0);
-    std::vector<float> Pi_processor(0);
-
-    if (world_rank == 0)
+    if (world_rank == world_size -1)
     {
-        // Eigen::VectorXf J_merged(J.size());
-        J_processor.resize(processor_workload_last);
-        Pi_processor.resize(processor_workload_last);
+        processor_end = J.size();
     }
+
+    std::vector<float> J_buffer(processor_workload);
+    std::vector<float> Pi_buffer(processor_workload);
 
     float error = 0;
 
@@ -76,25 +64,26 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
         if(t % comm_period == 0)
         {
-            //MPI_Status status;
-            //MPI_Request request;
-
             if ( world_rank != root_id)
             {
+                if( world_rank == world_size - 1)
+                {
+                    processor_workload = processor_workload_last;
+
+                }
+
                 float* J_raw = J.data();
 
-                MPI_Error_Check(MPI_Isend(J_raw + processor_start,
-                    processor_workload,
-                    MPI_FLOAT,
-                    root_id,
-                    1,
-                    MPI_COMM_WORLD,
-                    &request));
-
+                MPI_Isend(J_raw + processor_start,
+                        processor_workload,
+                        MPI_FLOAT,
+                        root_id,
+                        1,
+                        MPI_COMM_WORLD,
+                        &request);
                 ///////////////////////////////////////////////
                 // Do some other computations here if needed //
                 ///////////////////////////////////////////////
-
                 MPI_Error_Check(MPI_Wait(&request, &status));
             }
 
@@ -109,74 +98,58 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
                     int source_rank = status.MPI_SOURCE;
 
-                    //MPI_Get_count(&status, MPI_FLOAT, processor_workload);
-
                     if (source_rank == world_rank - 1)
                     {
                         processor_workload = processor_workload_last;
+                        J_buffer.resize(processor_workload_last);
+                        Pi_buffer.resize(processor_workload_last);
                     }
 
-                    MPI_Error_Check(MPI_Irecv(J_processor.data(),
+                    MPI_Irecv(J_buffer.data(),
                           processor_workload,
                           MPI_FLOAT,
                           source_rank,
                           1,
                           MPI_COMM_WORLD,
-                          &request));
-
+                          &request);
                     ///////////////////////////////////////////////
                     // Do some other computations here if needed //
                     ///////////////////////////////////////////////
+                    //MPI_Wait(&request, &status);
 
-                    // Blocks and waits for destination process to receive data
-                    // MPI_Error_Check(MPI_Wait(&request, &status));
+                    Eigen::Map<Eigen::VectorXf> J_sub(J_buffer.data(), processor_workload);
 
-                    // Tests for completion of send or receive, itself is non-blocking
-                    // MPI_Test()
-
-                    // Waits for all given communications to complete
-                    // MPI_Waitall()
-
-                    Eigen::Map<Eigen::VectorXf> J_merged(J_processor.data(), processor_workload);
-
-                    float recv_max_diff = (J.segment(source_rank * processor_workload, processor_workload) -
-                                           J_merged).cwiseAbs().maxCoeff();
+                    float recv_max_diff = (J.segment(source_rank * processor_workload, processor_workload) - J_sub).cwiseAbs().maxCoeff();
 
                     if (recv_max_diff > error)
                     {
                         error = recv_max_diff;
                     }
 
-                    J.segment(source_rank * processor_workload, processor_workload) = J_merged;
-                    MPI_Error_Check(MPI_Wait(&request, &status));
+                    J.segment(source_rank * processor_workload, processor_workload) = J_sub;
+
+                    MPI_Wait(&request, &status); // Blocks and waits for destination process to receive data
                 }
             }
             else throw std::runtime_error("Something strange happened!");
-
-            MPI_Barrier(MPI_COMM_WORLD); // Is this really needed?
                 
-            MPI_Error_Check(MPI_Ibcast(&error, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD, &request));
-
+            MPI_Ibcast(&error, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD, &request);
             ///////////////////////////////////////////////
             // Do some other computations here if needed //
             ///////////////////////////////////////////////
+            MPI_Wait(&request, &status);
 
-            MPI_Error_Check(MPI_Wait(&request, &status));
-
-            // If convergence criteria is reached -> terminate
             if(error <= tolerance)
             {
                 debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
                 break;
             }
 
-            MPI_Error_Check(MPI_Ibcast(J.data(), J.size(), MPI_FLOAT, root_id, MPI_COMM_WORLD, &request));
-
+            MPI_Ibcast(J.data(), J.size(), MPI_FLOAT, root_id, MPI_COMM_WORLD, &request);
             ///////////////////////////////////////////////
             // Do some other computations here if needed //
             ///////////////////////////////////////////////
-
-            MPI_Error_Check(MPI_Wait(&request, &status));
+            MPI_Wait(&request, &status);
 
             error = 0;
         }
@@ -185,33 +158,22 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     std::vector<int> recvcounts;
     std::vector<int> displs;
 
-    for(int i=0; i < world_size; ++i)
+    for(int i=0; i < world_size; i++)
     {
-        if(i+1 < world_size) recvcounts.push_back((J.size() / world_size));
-        else recvcounts.push_back((J.size() / world_size) + J.size() % world_size);
+        if(i == world_size - 1)
+        {
+            recvcounts.push_back(processor_workload_last);
+            displs.push_back(i*processor_workload);
+        }
 
-        if(i == 0) displs.push_back(0);
-        else displs.push_back(displs[i-1] + recvcounts[i-1]);
+        else
+        {
+            recvcounts.push_back(processor_workload);
+            displs.push_back(i*processor_workload);
+        }
     }
 
-//    for(int i=0; i < world_size; i++)
-//    {
-//        if(i == world_size - 1)
-//        {
-//            recvcounts.push_back(J.size() % processor_workload);
-//            displs.push_back(i*processor_workload);
-//        }
-//
-//        else
-//        {
-//            recvcounts.push_back(processor_workload);
-//            displs.push_back(i*processor_workload);
-//        }
-//    }
-//
     int* Pi_raw = Pi.data();
-    //MPI_Status status_gather;
-    //MPI_Request request_gather;
 
     MPI_Igatherv(&Pi_raw[processor_start],
             processor_workload,
