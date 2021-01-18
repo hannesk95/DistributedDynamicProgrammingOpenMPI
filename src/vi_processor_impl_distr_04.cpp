@@ -43,6 +43,9 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
     int request_complete = 0;   // Use if MPI_Test is used
 
+    MPI_Status status;
+    MPI_Request request;
+
     int processor_workload = ceil(J.size() / world_size);
     int processor_workload_last = processor_workload + (J.size() % world_size);
     int processor_start = processor_workload * world_rank;
@@ -73,8 +76,8 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
         if(t % comm_period == 0)
         {
-            MPI_Status status;
-            MPI_Request request;
+            //MPI_Status status;
+            //MPI_Request request;
 
             if ( world_rank != root_id)
             {
@@ -179,10 +182,19 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
         }
     }
 
-//    std::vector<int> recvcounts;
-//    std::vector<int> displs;
-//
-//    for(int i=0; i < world_size; ++i)
+    std::vector<int> recvcounts;
+    std::vector<int> displs;
+
+    for(int i=0; i < world_size; ++i)
+    {
+        if(i+1 < world_size) recvcounts.push_back((J.size() / world_size));
+        else recvcounts.push_back((J.size() / world_size) + J.size() % world_size);
+
+        if(i == 0) displs.push_back(0);
+        else displs.push_back(displs[i-1] + recvcounts[i-1]);
+    }
+
+//    for(int i=0; i < world_size; i++)
 //    {
 //        if(i == world_size - 1)
 //        {
@@ -197,26 +209,26 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 //        }
 //    }
 //
-//    int* Pi_raw = Pi.data();
-//    MPI_Status status_gather;
-//    MPI_Request request_gather;
-//
-//    MPI_Igatherv(&Pi_raw[processor_start],
-//            processor_workload,
-//            MPI_INT,
-//            Pi_raw,
-//            recvcounts.data(),
-//            displs.data(),
-//            MPI_INT,
-//            root_id,
-//            MPI_COMM_WORLD,
-//            &request_gather);
-//
-//    ///////////////////////////////////////////////
-//    // Do some other computations here if needed //
-//    ///////////////////////////////////////////////
-//
-//    MPI_Wait(&request_gather, &status_gather);
+    int* Pi_raw = Pi.data();
+    //MPI_Status status_gather;
+    //MPI_Request request_gather;
+
+    MPI_Igatherv(&Pi_raw[processor_start],
+            processor_workload,
+            MPI_INT,
+            Pi_raw,
+            recvcounts.data(),
+            displs.data(),
+            MPI_INT,
+            root_id,
+            MPI_COMM_WORLD,
+            &request);
+
+    ///////////////////////////////////////////////
+    // Do some other computations here if needed //
+    ///////////////////////////////////////////////
+
+    MPI_Wait(&request, &status);
 }
 
 std::string VI_Processor_Impl_Distr_04::GetName()
