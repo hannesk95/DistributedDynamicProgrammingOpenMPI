@@ -1,7 +1,6 @@
 #include "vi_processor_base.h"
 #include "cnpy.h"
 #include <mpi.h>
-#include <omp.h>
 
 
 VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha, const float _tolerance)
