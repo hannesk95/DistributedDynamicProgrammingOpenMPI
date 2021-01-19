@@ -38,10 +38,11 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     MPI_Status status;
     MPI_Request request;
 
-    int processor_workload = ceil(J.size() / world_size);
-    int processor_workload_last = J.size() % world_size;
+    int processor_workload = ceil(float(J.size()) / world_size);
+    int processor_workload_last = J.size() - (world_size - 1)*processor_workload;
     int processor_start = processor_workload * world_rank;
     int processor_end = processor_workload * (world_rank +1);
+
 
     if (world_rank == world_size -1)
     {
@@ -66,16 +67,18 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
         {
             if ( world_rank != root_id)
             {
+
+                int send_workload = processor_workload;
+
                 if( world_rank == world_size - 1)
                 {
-                    processor_workload = processor_workload_last;
-
+                    send_workload = processor_workload_last;
                 }
 
                 float* J_raw = J.data();
 
                 MPI_Isend(J_raw + processor_start,
-                        processor_workload,
+                        send_workload,
                         MPI_FLOAT,
                         root_id,
                         1,
@@ -97,16 +100,15 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                                     &status));
 
                     int source_rank = status.MPI_SOURCE;
+                    int recv_workload = processor_workload;
 
-                    if (source_rank == world_rank - 1)
+                    if (source_rank == world_size - 1)
                     {
-                        processor_workload = processor_workload_last;
-                        J_buffer.resize(processor_workload_last);
-                        Pi_buffer.resize(processor_workload_last);
+                        recv_workload = processor_workload_last;
                     }
 
                     MPI_Irecv(J_buffer.data(),
-                          processor_workload,
+                          recv_workload,
                           MPI_FLOAT,
                           source_rank,
                           1,
@@ -117,18 +119,22 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     ///////////////////////////////////////////////
                     //MPI_Wait(&request, &status);
 
-                    Eigen::Map<Eigen::VectorXf> J_sub(J_buffer.data(), processor_workload);
+                    Eigen::Map<Eigen::VectorXf> J_sub(J_buffer.data(), recv_workload);
 
-                    float recv_max_diff = (J.segment(source_rank * processor_workload, processor_workload) - J_sub).cwiseAbs().maxCoeff();
+                    auto vector = J.segment(source_rank * processor_workload, recv_workload);
+
+                    float recv_max_diff = (vector - J_sub).cwiseAbs().maxCoeff();
 
                     if (recv_max_diff > error)
                     {
                         error = recv_max_diff;
                     }
 
-                    J.segment(source_rank * processor_workload, processor_workload) = J_sub;
+                    J.segment(source_rank * processor_workload, recv_workload) = J_sub;
 
                     MPI_Wait(&request, &status); // Blocks and waits for destination process to receive data
+
+
                 }
             }
             else throw std::runtime_error("Something strange happened!");
@@ -176,7 +182,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     int* Pi_raw = Pi.data();
 
     MPI_Igatherv(&Pi_raw[processor_start],
-            processor_workload,
+            processor_end - processor_start,
             MPI_INT,
             Pi_raw,
             recvcounts.data(),
