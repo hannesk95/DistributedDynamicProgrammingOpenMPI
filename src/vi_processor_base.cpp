@@ -1,8 +1,17 @@
-#include "vi_processor_base.h"
-#include "cnpy.h"
-#include <mpi.h>
+// Base class for all implementations
 
+// includes
+#include "vi_processor_base.h" // header
+#include "cnpy.h" // read .npy files
+#include <mpi.h> // openmpi support
 
+/**
+ * Constructor of Base class for all implementations
+ * @param args: arguments dictionary with path to respective .npy files [const Dictionary reference]
+ * @param _root_id: id of root processor [const Integer]
+ * @param _alpha: discount factor for value iteration [const Float]
+ * @param _tolerance: tolerance for break condition [const Float]
+ */
 VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha, const float _tolerance)
     : alpha(_alpha), tolerance(_tolerance), root_id(_root_id)
 {
@@ -36,6 +45,39 @@ VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root
     Pi = std::move(std::unique_ptr<Eigen::VectorXi>(new Eigen::VectorXi(P_shape[1])));
 }
 
+/**
+ * processes the value iteration. Gets called in main for every implementation
+ * @param Pi_out: initialized Pi [Integer vector reference]
+ * @param J_out: initialized J [Float vector reference]
+ * @param max_iter: maximum number of iterations before stopping anyway [const unsigned Integer]
+ */
+void VI_Processor_Base::Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter)
+{
+    // fill initialized J and Pi (from constructor) with 0s
+    J.get()->fill(0);
+    Pi.get()->fill(0);
+    // do actual value iteration
+    value_iteration_impl(*Pi.get(), *J.get(), *P.get(), max_iter);
+    // set params to be calculated values
+    Pi_out.assign(Pi.get()->data(), Pi.get()->data() + Pi.get()->size());
+    J_out.assign(J.get()->data(), J.get()->data() + J.get()->size());
+}
+
+/**
+ * get name of implementation
+ * @return name: name of implementation [String]
+ */
+std::string VI_Processor_Base::GetName()
+{
+    return typeid(*this).name();
+}
+
+/**
+ * set parameter of implementation
+ * @param param: param name to set [String]
+ * @param value: value of param to set [String]
+ * @return hasParam: whether implementation has parameters [=true] or not [=false] [Boolean]
+ */
 bool VI_Processor_Base::SetParameter(std::string param, float value)
 {
     if(param == "alpha")
@@ -48,10 +90,13 @@ bool VI_Processor_Base::SetParameter(std::string param, float value)
         tolerance = value;
         return true;
     }
-
     return false;
 }
 
+/**
+ * get parameter of implementation
+ * @return parameters: mapped pair of "alpha" and "tolerance" [Pair]
+ */
 std::map<std::string, float> VI_Processor_Base::GetParameters()
 {
     std::map<std::string, float> parameters;
@@ -60,35 +105,15 @@ std::map<std::string, float> VI_Processor_Base::GetParameters()
     return parameters;
 }
 
-void VI_Processor_Base::debug_message(std::string msg)
-{
-    #ifdef VI_PROCESSOR_DEBUG
-    int world_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-    if(root_id == world_rank)
-    {
-        std::cout << "[" << GetName() << "]: " << msg << std::endl;
-    }
-    #endif
-}
-
-std::string VI_Processor_Base::GetName()
-{
-    return typeid(*this).name();
-}
-
-void VI_Processor_Base::Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter)
-{
-    J.get()->fill(0);
-    Pi.get()->fill(0);
-
-    value_iteration_impl(*Pi.get(), *J.get(), *P.get(), max_iter);
-
-    Pi_out.assign(Pi.get()->data(), Pi.get()->data() + Pi.get()->size());
-    J_out.assign(J.get()->data(), J.get()->data() + J.get()->size());
-}
-
-
+/**
+ * performs the actual iteration step (for given amount of epochs before returning the result)
+ * @param Pi: current Pi [Eigen Integer vector reference]
+ * @param J: current J [Eigen Float vector reference]
+ * @param P: probability matrix [const Eigen SparseMatrix<RowMajor> reference]
+ * @param process_first_state: first state that shall be processed in sub part of whole state space [const Integer]
+ * @param process_last_state: last state that shall be processed in sub part of whole state space [const Integer]
+ * @return error: calculated difference between old and new J [Float]
+ */
 float VI_Processor_Base::iteration_step(
     Eigen::Ref<Eigen::VectorXi> Pi, 
     Eigen::Ref<Eigen::VectorXf> J, 
@@ -96,12 +121,12 @@ float VI_Processor_Base::iteration_step(
     const int process_first_state, 
     const int process_last_state)
 {
+    // set error to 0
     float error = 0;
-
+    // go through all states that shall be processed (not all for most implementations)
     for(unsigned int state = process_first_state; state < process_last_state; ++state)
     {
-
-        // Problem specific values
+        // Problem specific values for fuel, goal star and current star
         unsigned int fuel = state / (n_stars*n_stars);
         unsigned int goal_star = state % (n_stars*n_stars) / n_stars;
         unsigned int current_star = state % (n_stars*n_stars) % n_stars;
@@ -113,34 +138,30 @@ float VI_Processor_Base::iteration_step(
         int optimal_action = 0;
         float optimal_cost = std::numeric_limits<float>::max();
                     
-        // u is action
+        // go through all possible actions in that state
         for(int action = 0; action < P_slice.outerSize(); ++action)
         {
             // Iterate over columns of current row
             Eigen::InnerIterator<typeof(P_slice)> _iterator(P_slice, action);
-            if(_iterator)
+            if(_iterator) // if value is not 0
             {
                 // Storage for action cost
                 float cost_action = 0;
 
-                for(;;)
+                for(;;) // If action is not defined for current state we will not end up in this loop!
                 {
-                    // If action is not defined for current state we will not end up in this loop!
-
                     // Cost for current action in current state
                     float cost = 0;
                     if(goal_star == current_star && action == 0) cost = -100;
                     else if(fuel == 0)          cost = 100;
                     else if(action != 0)          cost = 5;
 
-                    // Accumulate possible actoin costs
+                    // Accumulate possible action costs
                     cost_action += _iterator.value() * (cost + alpha*J[_iterator.col()]);
 
                     // Next value
-                    if(!(++_iterator))
+                    if(!(++_iterator)) // Reached end of row
                     {
-                        // Reached end of row
-                                    
                         // Check if current action is optimal
                         if(cost_action < optimal_cost)
                         {
@@ -163,6 +184,21 @@ float VI_Processor_Base::iteration_step(
         J[state] = optimal_cost;                    
 
     }
-
     return error;
+}
+
+/**
+ * debugging message to print some output onto the screen
+ * @param msg: message to print [String]
+ */
+void VI_Processor_Base::debug_message(std::string msg)
+{
+#ifdef VI_PROCESSOR_DEBUG
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+    if(root_id == world_rank) // only 'master' prints, not every processor
+    {
+        std::cout << "[" << GetName() << "]: " << msg << std::endl;
+    }
+#endif
 }

@@ -1,22 +1,22 @@
+// Header of Base class for all implementations
+
+// be sure class is defined
 #ifndef __VI_PROCESSOR_BASE_H
 #define __VI_PROCESSOR_BASE_H
-
-
+// be sure Eigen uses BLAS and LAPACKE
 #define EIGEN_USE_BLAS
 #define EIGEN_USE_LAPACKE
-#include "Eigen/Sparse"
+#define VI_PROCESSOR_DEBUG
+// includes
+#include "Eigen/Sparse" // for 'numpy-similar' operations
+#include <string> // string usage
+#include <memory> // memory optimization
+#include <map> // mapping functionality
+#include <iostream> // printing
 
-#include <string>
-#include <memory>
-#include <map>
-#include <iostream>
-
-#define VI_PROCESSOR_DEBUG 
-
-///
-/// \brief Value Iteration processor input arguments
-/// 
-///
+/**
+ * helping typedef (=Dictionary) to store the file paths
+ */
 typedef struct {
     std::string P_npy_indptr_filename;
     std::string P_npy_indices_filename;
@@ -25,106 +25,106 @@ typedef struct {
     std::string Param_npz_dict_filename;
 }vi_data_args_t;
 
+/**
+ * helping typedef for SparseMatrix, float, RowMajor
+ */
 typedef Eigen::SparseMatrix<float, Eigen::RowMajor> SpMat_t;
 
+/**
+ * Base class for all implementations
+ */
 class VI_Processor_Base {
-    protected:
+public:
+    /**
+     * Constructor of Base class for all implementations
+     * @param args: arguments dictionary with path to respective .npy files [const Dictionary reference]
+     * @param _root_id: id of root processor [const Integer]
+     * @param _alpha: discount factor for value iteration [const Float]
+     * @param _tolerance: tolerance for break condition [const Float]
+     */
+    VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha = 0.99, const float _tolerance = 1e-10);
 
-    // Id of processor which shall provide the results
-    const int root_id;
+    /**
+     * processes the value iteration. Gets called in main for every implementation
+     * @param Pi_out: initialized Pi [Integer vector reference]
+     * @param J_out: initialized J [Float vector reference]
+     * @param max_iter: maximum number of iterations before stopping anyway [const unsigned Integer]
+     */
+    void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter = 10e6);
 
-    ///
-    /// \brief Value iteration implementation
-    /// 
-    /// \param Pi           Optimal policy will be stored in this vector
-    /// \param J            Value for each state will be stored in this vector
-    /// \param P            Transition probability matrix
-    /// \param max_iter            Maximal number of iteration steps
-    ///
-    virtual void value_iteration_impl(
-        Eigen::Ref<Eigen::VectorXi> Pi, 
-        Eigen::Ref<Eigen::VectorXf> J, 
-        const Eigen::Ref<const SpMat_t> P, 
-        const unsigned int max_iter
-    ) = 0;
+    /**
+     * get name of implementation
+     * @return name: name of implementation [String]
+     */
+    virtual std::string GetName();
 
-    
-    ///
-    /// \brief Prints out a message if VI_PROCESSOR_DEBUG is defined
-    /// 
-    /// \param msg 
-    ///
-    void debug_message(std::string msg);
+    /**
+     * set parameter of implementation
+     * @param param: param name to set [String]
+     * @param value: value of param to set [String]
+     * @return hasParam: whether implementation has parameters [=true] or not [=false] [Boolean]
+     */
+    virtual bool SetParameter(std::string param, float value);
 
+    /**
+     * get parameter of implementation
+     * @return parameters: mapped pair of "alpha" and "tolerance" [Pair]
+     */
+    virtual std::map<std::string, float> GetParameters();
 
-    float alpha; // Discount factor
-    float tolerance; // Convergence limit    
-
-    ///
-    /// \brief 
-    /// 
-    /// \param Pi                   Optimal policy will be stored in this vector
-    /// \param J                    Value for each state will be stored in this vector
-    /// \param P                    Transition probability matrix
-    /// \param process_first_state  The first state in the range to update
-    /// \param process_last_state   The last state in the range to update
-    /// \return                     The maximum absolute change of cost values
-    ///
-    float iteration_step(
-        Eigen::Ref<Eigen::VectorXi> Pi, 
-        Eigen::Ref<Eigen::VectorXf> J, 
-        const Eigen::Ref<const SpMat_t> P, 
-        const int process_first_state, 
-        const int process_last_state);
-
-    private:    
-
+private:
     unsigned int n_states; // Number of possible actions
     unsigned int n_stars; // Number of stars in navigation task
 
-    std::vector<int> P_indptr;
-    std::vector<int> P_indices;
-    std::vector<float> P_data;
-    std::vector<int64_t> P_shape;
+    std::vector<int> P_indptr; // IndexPtr of probability matrix [Integer vector]
+    std::vector<int> P_indices; // Indices of probability matrix [Integer vector]
+    std::vector<float> P_data; // Data of probability matrix [Float vector]
+    std::vector<int64_t> P_shape; // Shape of probability matrix [Integer64_t vector]
 
-    std::unique_ptr<Eigen::Map<SpMat_t>> P;
-    std::unique_ptr<Eigen::VectorXf> J;
-    std::unique_ptr<Eigen::VectorXi> Pi;
+    std::unique_ptr<Eigen::Map<SpMat_t>> P; // probability matrix [mapped Eigen Sparse Matrix pointer]
+    std::unique_ptr<Eigen::VectorXf> J; // J [Eigen Float vector pointer]
+    std::unique_ptr<Eigen::VectorXi> Pi; // Pi [Eigen Integer vector pointer]
 
-    public:
+protected:
+    const int root_id; // Id of processor which shall provide the results [Integer]
+    float alpha; // Discount factor [Float]
+    float tolerance; // Convergence limit [Float]
 
-    VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha = 0.99, const float _tolerance = 1e-10);
+    /**
+     * abstract function that gets overwritten by every actual implementation for the communication scheme
+     * @param Pi: initialized Pi [Integer vector reference]
+     * @param J: initialized J [Float vector reference]
+     * @param P: probability matrix [const Eigen SparseMatrix<RowMajor> reference]
+     * @param max_iter: maximum number of iterations before stopping anyway [const unsigned Integer]
+     */
+    virtual void value_iteration_impl(
+            Eigen::Ref<Eigen::VectorXi> Pi,
+            Eigen::Ref<Eigen::VectorXf> J,
+            const Eigen::Ref<const SpMat_t> P,
+            const unsigned int max_iter
+    ) = 0;
 
-    ///
-    /// \brief Process the data
-    /// 
-    /// \param Pi_out Vector in which optimal strategy for each state shall be stored (only usefull in root processor)
-    /// \param J_out  Vector in which optimal cost for each state shall be stored (only usefull in root processor)
-    /// \param max_iter      Maximal number of iteration steps
-    ///
-    void Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter = 10e6);
-    
-    ///
-    /// \brief Get the Name of the Processor
-    /// 
-    /// \return string 
-    ///
-    virtual std::string GetName();
+    /**
+     * get name of implementation
+     * @return name: name of implementation [String]
+     */
+    void debug_message(std::string msg);
 
-    ///
-    /// \brief Set the Parameters of processor
-    /// 
-    /// \param param Name of the parameter
-    /// \param value Value of the parameter
-    ///
-    virtual bool SetParameter(std::string param, float value);
-
-    ///
-    /// \brief Get the current Parameter values as key value pairs
-    /// 
-    /// \return std::map<std::string, float> 
-    ///
-    virtual std::map<std::string, float> GetParameters();
+    /**
+     * performs the actual iteration step (for given amount of epochs before returning the result)
+     * @param Pi: current Pi [Eigen Integer vector reference]
+     * @param J: current J [Eigen Float vector reference]
+     * @param P: probability matrix [const Eigen SparseMatrix<RowMajor> reference]
+     * @param process_first_state: first state that shall be processed in sub part of whole state space [const Integer]
+     * @param process_last_state: last state that shall be processed in sub part of whole state space [const Integer]
+     * @return error: calculated difference between old and new J [Float]
+     */
+    float iteration_step(
+            Eigen::Ref<Eigen::VectorXi> Pi,
+            Eigen::Ref<Eigen::VectorXf> J,
+            const Eigen::Ref<const SpMat_t> P,
+            const int process_first_state,
+            const int process_last_state);
 };
 
 
