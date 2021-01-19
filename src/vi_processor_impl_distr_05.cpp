@@ -46,6 +46,11 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
     int processor_start = processor_workload * world_rank;
     int processor_end = processor_workload * (world_rank +1);
 
+    if (world_rank == world_size -1)
+    {
+        processor_end = J.size();
+    }
+
     Eigen::VectorXf J_buffer(0);
     J_buffer = J.segment(0, J.size());
 
@@ -100,8 +105,8 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
             //Eigen::Map<Eigen::VectorXf> J_final(J_raw, J.size());
             //Eigen::Map<Eigen::VectorXf> J(J_raw, J_buffer.size());
 
-            std::cout << "Rank: " << world_rank << std::endl;
-            std::cout << J_buffer << std::endl;
+            //std::cout << "Rank: " << world_rank << std::endl;
+            //std::cout << J_buffer << std::endl;
 
 
             float deviation = (J_buffer-J).cwiseAbs().maxCoeff();
@@ -116,7 +121,7 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
 
             //J = J_final.segment(0, 125);
 
-            MPI_Bcast(J.data(), 125, MPI_FLOAT, root_id, MPI_COMM_WORLD);
+            MPI_Bcast(J.data(), J.size(), MPI_FLOAT, root_id, MPI_COMM_WORLD);
 
 
 
