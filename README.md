@@ -197,7 +197,7 @@ Installer Dateien sind im Ordner <a href="install_files/" target="_blank">`insta
 
 ## Anhang
 
-- <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> Versionen auf den Eikon Rechnern
+<a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> Versionen auf den Eikon Rechnern
 
 | HPC Rechner          | OpenMPI Version        |
 | -------------------- | ---------------------- |
