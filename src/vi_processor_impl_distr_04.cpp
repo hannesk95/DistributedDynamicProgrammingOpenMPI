@@ -121,9 +121,9 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
                     Eigen::Map<Eigen::VectorXf> J_sub(J_buffer.data(), recv_workload);
 
-                    auto number = J.segment(source_rank * processor_workload, recv_workload);
+                    auto vector = J.segment(source_rank * processor_workload, recv_workload);
 
-                    float recv_max_diff = (number - J_sub).cwiseAbs().maxCoeff();
+                    float recv_max_diff = (vector - J_sub).cwiseAbs().maxCoeff();
 
                     if (recv_max_diff > error)
                     {
