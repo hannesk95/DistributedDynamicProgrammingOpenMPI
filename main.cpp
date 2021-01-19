@@ -6,7 +6,7 @@
 #include "vi_processor_impl_local.h"
 #include "vi_processor_impl_distr_01.h"
 #include "vi_processor_impl_distr_02.h"
-#include "vi_processor_impl_distr_42.h"
+#include "vi_processor_impl_distr_03.h"
 #include "vi_processor_impl_distr_04.h"
 #include "vi_processor_impl_distr_05.h"
 
@@ -15,8 +15,8 @@
 int main(int argc, char *argv[])
 {
     MPI_Init(&argc, &argv);
-    std::string data_folder = "../data/data_debug"; // Here can the data be found
-    std::string result_folder = "../results";       // Here shall the evaluation results be stored
+    std::string data_folder = argv[1]; // Here can the data be found
+    std::string result_folder = argv[2];       // Here shall the evaluation results be stored
     std::vector<int> comm_periods{10,50,100,500};   // Communication periods which shall be evaluated
     const int n_runs = 10;                          // Number of evaluation runs
 
@@ -42,14 +42,14 @@ int main(int argc, char *argv[])
     Eigen::Map<Eigen::VectorXi> Pi_star(Pi_star_vec.data(), Pi_star_vec.size());
 
     std::vector<std::unique_ptr<VI_Processor_Base>> processors;
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0, comm_period)));
-//    for(const int& comm_period : comm_periods)
-//        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_04(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_03(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_04(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_05(args, 0, comm_period)));
 
