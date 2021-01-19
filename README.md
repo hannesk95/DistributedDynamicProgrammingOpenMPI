@@ -23,19 +23,19 @@
 
 ## Allgemeines zu diesem Projekt
 
-In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von OpenMPI vorgestellt. Dabei werden verschiedene Strategien implementiert und anschließend einem Benchmark Vergleich unterzogen.
+In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> vorgestellt. Dabei werden verschiedene Strategien implementiert und anschließend einem Benchmark Vergleich unterzogen.
 
 ---
 
 ## Repository-Struktur
 
 - <a href="data/" target="_blank">`data/`</a> - enthält Datensätze
-- <a href="install_files/" target="_blank">`install_files/`</a> - enthält alle benötigten Debian-Dateien zum Installieren von `OpenMPI` [Version 2.2.1]
+- <a href="install_files/" target="_blank">`install_files/`</a> - enthält alle benötigten Debian-Dateien zum Installieren von <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> [Version 2.2.1]
 - <a href="lib/" target="_blank">`lib/`</a> - enthält alle benötigten Lirbraries
 - <a href="results/" target="_blank">`results/`</a> - enthält die Resultate der Implementierungen
 - <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
 - <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
-- <a href="Makefile" targeT="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
+- <a href="Makefile" target="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
 - <a href="benchmark_visual.py" target="_blank">`benchmark_visual.py`</a> - Skript, dass den Benchmarkvergleich der einzelnen Implementierungen graphisch aufbereitet
 - <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
 - <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptskript, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
@@ -44,21 +44,25 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von Op
 
 ## Kommmunikationsprotokolle:
 
-| Name                          | OpenMPI Funktionen                    |
-| ----------------------------- | ------------------------------------- |
-| `VI_Processor_Impl_Distr_01`  | `Allgatherv`, `Allreduce`, `Gatherv`  |
-| `VI_Processor_Impl_Distr_02`  | `Send`, `Recv`, `Bcast`               |
-| `VI_Processor_Impl_Distr_04`  | `Isend`, `Irecv`, `Ibcast`, `Igatherv`|
-| `VI_Processor_Impl_Distr_05`  | `Igatherv`, `Bcast`, `Gatherv`        |
-| `VI_Processor_Impl_Distr_42`  | `Sendrecv`, `Gatherv`                 |
+Aus Simplifikationsgründen - vor allem da die einzelnen Namen der Implementierungen sehr lange und unübersichtlich werden - sind die einzelnen Kommunikationsprotokolle nummeriert. Im Folgenden kann nachgelesen werden, welche Nummer welcher <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a>-Funktionalität entspricht.
 
-Umfrangreiche Dokumenation zu möglichen OpenMPI Kommunicationsprotokollen und deren Funktionen: [`Princeton Bootcamp Kommunikationsprotokolle`](https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf)
+| Name                                                                                           | OpenMPI Funktionen                    |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------- |
+| <a href="src/vi_processor_impl_distr_01.cpp" target="_blank">`VI_Processor_Impl_Distr_01`</a>  | `Allgatherv`, `Allreduce`, `Gatherv`  |
+| <a href="src/vi_processor_impl_distr_02.cpp" target="_blank">`VI_Processor_Impl_Distr_02`</a>  | `Send`, `Recv`, `Bcast`               |
+| <a href="src/vi_processor_impl_distr_03.cpp" target="_blank">`VI_Processor_Impl_Distr_03`</a>  | `Sendrecv`, `Gatherv`                 |
+| <a href="src/vi_processor_impl_distr_04.cpp" target="_blank">`VI_Processor_Impl_Distr_04`</a>  | `Isend`, `Irecv`, `Ibcast`, `Igatherv`|
+| <a href="src/vi_processor_impl_distr_05.cpp" target="_blank">`VI_Processor_Impl_Distr_05`</a>  | `Igatherv`, `Bcast`, `Gatherv`        |
+
+Umfangreiche Dokumenation zu möglichen <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> Kommunicationsprotokollen und deren Funktionen: [`Princeton Bootcamp Kommunikationsprotokolle`](https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf) bzw. <a href="https://www.open-mpi.org/doc/v2.1/" target="_blank">`offizielle Dokumentation der genutzten OpenMPI Version [2.1.1]`</a>. Für Vergleichszwecke wurde <a href="src/vi_processor_impl_local.cpp" target="_blank">`VI_Processor_Impl_Local`</a> implementiert, welche die Implementation der synchronen `Value Iteration` aus Hausaufgabe 2 ist
+
+Nähere Informationen über die einzelnen Implementierungen können in <a href="src/" target="_blank">`src/`</a> bzw. den einzelnen Skripts selbst nachgelesen werden
 
 ---
 
 ## Anlegen eines Branches für Evaluierungsprogramm
 
-Das Evaluierungsprogramm soll nur dazu dienen die performanteste Implementierung zu ermitteln. Für die eigentliche Value Iteration Aufgabe erstellen wir im Master-Branch eine `main.cpp` Datei welcher wir z.B. via Kommandozeilenargumenten den Ordner zu den Daten sowie den Pfad in dem die Ergebnisse gespeichert werden sollen angeben.
+Das Evaluierungsprogramm soll nur dazu dienen die performanteste Implementierung zu ermitteln. Für die eigentliche Value Iteration Aufgabe erstellen wir im Master-Branch eine <a href="main.cpp" target="_blank">`main.cpp`</a> Datei welcher wir z.B. via Kommandozeilenargumenten den Ordner zu den Daten sowie den Pfad in dem die Ergebnisse gespeichert werden sollen angeben.
 
 ---
 
@@ -193,7 +197,7 @@ Installer Dateien sind im Ordner <a href="install_files/" target="_blank">`insta
 
 ## Anhang
 
-- OpenMPI Versionen auf den Eikon Rechnern
+- <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> Versionen auf den Eikon Rechnern
 
 | HPC Rechner          | OpenMPI Version        |
 | -------------------- | ---------------------- |
