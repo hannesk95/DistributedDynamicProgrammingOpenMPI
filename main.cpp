@@ -7,6 +7,8 @@
 #include "vi_processor_impl_distr_01.h"
 #include "vi_processor_impl_distr_02.h"
 #include "vi_processor_impl_distr_42.h"
+#include "vi_processor_impl_distr_04.h"
+#include "vi_processor_impl_distr_05.h"
 
 #include "cnpy.h"
 
@@ -44,9 +46,14 @@ int main(int argc, char *argv[])
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_01(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
-    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0)));
-    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_04(args, 0, comm_period)));
+    for(const int& comm_period : comm_periods)
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_05(args, 0, comm_period)));
 
+    processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Local(args, 0)));
 
     Eigen::MatrixXf measurements(n_runs, processors.size());
     Eigen::VectorXf mse_J(processors.size());
