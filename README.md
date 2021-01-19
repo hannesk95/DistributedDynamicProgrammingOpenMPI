@@ -5,19 +5,19 @@
 
 ## Inhaltsverzeichnis
 
-- [`Allgemeines zu diesem Projekt`](#Allgemeines-zu-diesem-Projekt)
-- [`Repository-Struktur`](#Repository-Struktur)
-- [`Kommmunikationsprotokolle`](#Kommmunikationsprotokolle)
-- [`Anlegen eines Branches für Evaluierungsprogramm`](#Anlegen-eines-Branches-für-Evaluierungsprogramm)
-- [`Erstellen des Hauptprogrammes`](#Erstellen-des-Hauptprogrammes)
-- [`Erweitern des Projekts mit Protokollen`](#Erweitern-des-Projekts-mit-Protokollen)
-- [`Datenimport`](#Datenimport)
-- [`Evaluation verschiedener Implementierungen`](#Evaluation-verschiedener-Implementierungen)
-- [`Programm ausführen`](#Programm-ausführen)
-- [`Benchmark Vergleich`](#Benchmark-Vergleich)
-- [`OpenMPI installieren`](#OpenMPI-installieren)
-- [`Gruppen Mitglieder`](#Gruppen-Mitglieder) 
-- [`Anhang`](#Anhang)
+- [`Allgemeines zu diesem Projekt`](#allgemeines-zu-diesem-projekt)
+- [`Repository-Struktur`](#repository-struktur)
+- [`Kommmunikationsprotokolle`](#kommmunikationsprotokolle)
+- [`Anlegen eines Branches für Evaluierungsprogramm`](#anlegen-eines-branches-für-evaluierungsprogramm)
+- [`Erstellen des Hauptprogrammes`](#erstellen-des-hauptprogrammes)
+- [`Erweitern des Projekts mit Protokollen`](#erweitern-des-projekts-mit-protokollen)
+- [`Datenimport`](#datenimport)
+- [`Evaluation verschiedener Implementierungen`](#evaluation-verschiedener-implementierungen)
+- [`Programm ausführen`](#programm-ausführen)
+- [`Benchmark Vergleich`](#benchmark-vergleich)
+- [`OpenMPI installieren`](#openmpi-installieren)
+- [`Gruppen Mitglieder`](#gruppen-mitglieder) 
+- [`Anhang`](#anhang)
 
 ---
 
