@@ -39,15 +39,9 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     MPI_Request request;
 
     int processor_workload = ceil(float(J.size()) / world_size);
-    //int processor_workload_last = J.size() % processor_workload;
     int processor_workload_last = J.size() - (world_size - 1)*processor_workload;
-
     int processor_start = processor_workload * world_rank;
     int processor_end = processor_workload * (world_rank +1);
-
-    //std::cout << processor_workload << std::endl;
-    //std::cout << processor_workload_last << std::endl;
-    //std::cout << processor_workload + processor_workload_last << std::endl;
 
 
     if (world_rank == world_size -1)
@@ -111,8 +105,6 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     if (source_rank == world_size - 1)
                     {
                         recv_workload = processor_workload_last;
-                        //J_buffer.resize(processor_workload_last);
-                        //Pi_buffer.resize(processor_workload_last);
                     }
 
                     MPI_Irecv(J_buffer.data(),
@@ -125,7 +117,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     ///////////////////////////////////////////////
                     // Do some other computations here if needed //
                     ///////////////////////////////////////////////
-                    MPI_Wait(&request, &status);
+                    //MPI_Wait(&request, &status);
 
                     Eigen::Map<Eigen::VectorXf> J_sub(J_buffer.data(), recv_workload);
 
@@ -140,7 +132,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
 
                     J.segment(source_rank * processor_workload, recv_workload) = J_sub;
 
-                    //MPI_Wait(&request, &status); // Blocks and waits for destination process to receive data
+                    MPI_Wait(&request, &status); // Blocks and waits for destination process to receive data
 
 
                 }
@@ -172,8 +164,6 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
     std::vector<int> recvcounts;
     std::vector<int> displs;
 
-
-
     for(int i=0; i < world_size; i++)
     {
         if(i == world_size - 1)
@@ -188,10 +178,6 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
             displs.push_back(i*processor_workload);
         }
     }
-
-    for(auto& el:recvcounts){std::cout << el << std::endl;}
-    for(auto& el:displs){std::cout << el << std::endl;}
-
 
     int* Pi_raw = Pi.data();
 
