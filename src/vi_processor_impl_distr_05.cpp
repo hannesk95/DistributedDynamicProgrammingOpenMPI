@@ -41,45 +41,36 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
 //        MPI_Abort(MPI_COMM_WORLD, 1);
 //    }
 
-    int processor_workload = ceil(J.size() / world_size);
+    int processor_workload = ceil(float(J.size()) / world_size);
+    int processor_workload_last = J.size() - (world_size - 1) * processor_workload;
     int processor_start = processor_workload * world_rank;
     int processor_end = processor_workload * (world_rank +1);
 
-
     Eigen::VectorXf J_buffer(0);
-    J_buffer = J.segment(0, 125);
+    J_buffer = J.segment(0, J.size());
 
     MPI_Request request;
     MPI_Status status;
 
-//    std::vector<int> recvcounts;
-//    std::vector<int> displs;
-//
-//    for(int i=0; i < world_size; ++i)
-//    {
-//        if(i == world_size - 1)
-//        {
-//            recvcounts.push_back(J.size() % processor_workload);
-//            displs.push_back(i*processor_workload);
-//        }
-//
-//        else
-//        {
-//            recvcounts.push_back(processor_workload);
-//            displs.push_back(i*processor_workload);
-//        }
-//    }
+    std::vector<int> recvcounts;
+    std::vector<int> displs;
 
-    std::vector<int> recvcounts;    // Number of states for each process
-    std::vector<int> displs;        // Displacement of sub vectors for each process
-    for(int i=0; i < world_size; ++i)
+    for(int i=0; i < world_size; i++)
     {
-        if(i+1 < world_size) recvcounts.push_back((J.size() / world_size));
-        else recvcounts.push_back((J.size() / world_size) + J.size() % world_size);
+        if(i == world_size - 1)
+        {
+            recvcounts.push_back(processor_workload_last);
+            displs.push_back(i*processor_workload);
+        }
 
-        if(i == 0) displs.push_back(0);
-        else displs.push_back(displs[i-1] + recvcounts[i-1]);
+        else
+        {
+            recvcounts.push_back(processor_workload);
+            displs.push_back(i*processor_workload);
+        }
     }
+
+
 
     for(unsigned int t=0; t < T; ++t)
     {
@@ -90,7 +81,7 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
             float* J_raw = J.data();
 
             MPI_Igatherv(&J_raw[processor_start],
-                        processor_workload,
+                        processor_end - processor_start,
                         MPI_FLOAT,
                         J_raw,
                         recvcounts.data(),
@@ -104,10 +95,16 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
             // Do some additional computations here if needed //
             ////////////////////////////////////////////////////
 
-            Eigen::Map<Eigen::VectorXf> J_final(J_raw, 125);
+            MPI_Wait(&request, &status);
+
+            //Eigen::Map<Eigen::VectorXf> J_final(J_raw, J.size());
             //Eigen::Map<Eigen::VectorXf> J(J_raw, J_buffer.size());
 
-            float deviation = (J_buffer-J_final).cwiseAbs().maxCoeff();
+            std::cout << "Rank: " << world_rank << std::endl;
+            std::cout << J_buffer << std::endl;
+
+
+            float deviation = (J_buffer-J).cwiseAbs().maxCoeff();
 
             MPI_Bcast(&deviation, 1, MPI_FLOAT, root_id, MPI_COMM_WORLD);
 
@@ -117,15 +114,16 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
                 break;
             }
 
-            J = J_final.segment(0, 125);
+            //J = J_final.segment(0, 125);
 
             MPI_Bcast(J.data(), 125, MPI_FLOAT, root_id, MPI_COMM_WORLD);
 
-            MPI_Error_Check(MPI_Wait(&request, &status));
 
-            J_buffer.resize(0);
 
-            J_buffer = J.segment(0, 125);
+            //J_buffer.resize(0);
+
+            //J_buffer = J.segment(0, 125);
+            J_buffer = J;
 
         }
     }
@@ -135,7 +133,7 @@ void VI_Processor_Impl_Distr_05::value_iteration_impl(
     MPI_Request request_gather;
 
     MPI_Gatherv(&Pi_raw[processor_start],
-                 processor_workload,
+                 processor_end - processor_start,
                  MPI_INT,
                  Pi_raw,
                  recvcounts.data(),
