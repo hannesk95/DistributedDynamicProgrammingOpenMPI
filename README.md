@@ -129,18 +129,18 @@ Dann kann das Projekt kompiliert und ausgeführt werden. Hierfür gibt es mehrer
     cd build
 
 1.3 # Ausführen (verteiltes rechnen auf mehrern PC's)
-    mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe
+    mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "<Pfad_zu_Daten_Ordner>" "<Pfad_zu_Results_Ordner>"
 
 --------------------------------------------------------
 
 2.  # Kompilieren und ausführen 
-    # (lokales rechnen auf Localhost, 2 Prozesse)
+    # (lokales rechnen auf Localhost, 2 Prozesse mit dem "data_debug" Datensatz)
     make run_mpi_local
 
 --------------------------------------------------------
 
 3.  # Kompilieren und ausführen 
-    # (verteiltes rechnen auf mehreren PC's)
+    # (verteiltes rechnen auf mehreren PC's mit dem "data_debug" Datensatz)
     make run_mpi_distr
 ```
 
@@ -166,7 +166,7 @@ Host *
 In unten stehender Grafik ist ein Benchmark Vergleich über alle implementierten Kommunikationsprotokolle zu sehen.
 
 <h2 align="center">
-  <img src="results/benchmark_distr.png" alt="resulting barnsley fern" width="800px" />
+  <img src="results/data_debug/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
 ---
