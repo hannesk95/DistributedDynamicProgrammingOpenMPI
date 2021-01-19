@@ -44,13 +44,13 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von Op
 
 ## Kommmunikationsprotokolle:
 
-| Name                          | OpenMPI Funktionen                  |
-| ----------------------------- | ----------------------------------- |
-| `VI_Processor_Impl_Distr_01`  | `Allgather`, `Allreduce`, `Gatherv` |
-| `VI_Processor_Impl_Distr_02`  | `Send`, `Receive`                   |
-| `VI_Processor_Impl_Distr_04`  | `Isend`, `Ireceive`, `Igatherv`     |
-| `VI_Processor_Impl_Distr_05`  | `Igather`, `Ibrcast`, `Igatherv`    |
-| `VI_Processor_Impl_Distr_42`  | `Sendrecv`                          |
+| Name                          | OpenMPI Funktionen                    |
+| ----------------------------- | ------------------------------------- |
+| `VI_Processor_Impl_Distr_01`  | `Allgatherv`, `Allreduce`, `Gatherv`  |
+| `VI_Processor_Impl_Distr_02`  | `Send`, `Recv`, `Bcast`               |
+| `VI_Processor_Impl_Distr_04`  | `Isend`, `Irecv`, `Ibcast`, `Igatherv`|
+| `VI_Processor_Impl_Distr_05`  | `Igatherv`, `Bcast`, `Gatherv`        |
+| `VI_Processor_Impl_Distr_42`  | `Sendrecv`, `Gatherv`                 |
 
 Umfrangreiche Dokumenation zu möglichen OpenMPI Kommunicationsprotokollen und deren Funktionen: [`Princeton Bootcamp Kommunikationsprotokolle`](https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf)
 

@@ -49,7 +49,7 @@ Header of <a href="vi_processor_impl_distr_01.cpp" target="_blank">`vi_processor
 
 ## <a href="vi_processor_impl_distr_02.cpp" target="_blank">`vi_processor_impl_distr_02.cpp`</a>
 
-second implementation of a communication scheme. Using `MPI_Send` and `MPI_Recv`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`. Logic of communication scheme is the same as in `VI_Processor_Impl_Distr_01`
+second implementation of a communication scheme. Using `MPI_Send`, `MPI_Recv` and `MPI_Bcast`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`. Logic of communication scheme is similar to `VI_Processor_Impl_Distr_01`
 
 Given functionality:
 - `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
@@ -60,7 +60,45 @@ Given functionality:
 
 ## <a href="vi_processor_impl_distr_02.h" target="_blank">`vi_processor_impl_distr_02.h`</a>
 
-Header of <a href="vi_processor_impl_distr_02.h" target="_blank">`vi_processor_impl_distr_02.h`</a>
+Header of <a href="vi_processor_impl_distr_02.cpp" target="_blank">`vi_processor_impl_distr_02.cpp`</a>
+
+<br/><br/>
+
+-------
+
+## <a href="vi_processor_impl_distr_04.cpp" target="_blank">`vi_processor_impl_distr_04.cpp`</a>
+
+third implementation of a communication scheme. Using `MPI_Isend` and `MPI_Irecv`, `MPI_Ibcast` and `MPI_Igatherv`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`. Logic of communication scheme is similar to `VI_Processor_Impl_Distr_02` but non-blocking
+
+Given functionality:
+- `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
+
+<br/><br/>
+
+-------
+
+## <a href="vi_processor_impl_distr_04.h" target="_blank">`vi_processor_impl_distr_04.h`</a>
+
+Header of <a href="vi_processor_impl_distr_04.cpp" target="_blank">`vi_processor_impl_distr_04.cpp`</a>
+
+<br/><br/>
+
+-------
+
+## <a href="vi_processor_impl_distr_05.cpp" target="_blank">`vi_processor_impl_distr_05.cpp`</a>
+
+third implementation of a communication scheme. Using `MPI_Igather`, `MPI_Bcast` and `MPI_Gatherv`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`. Logic of communication scheme is similar to `VI_Processor_Impl_Distr_01` but non-blocking
+
+Given functionality:
+- `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
+
+<br/><br/>
+
+-------
+
+## <a href="vi_processor_impl_distr_05.h" target="_blank">`vi_processor_impl_distr_05.h`</a>
+
+Header of <a href="vi_processor_impl_distr_05.cpp" target="_blank">`vi_processor_impl_distr_05.cpp`</a>
 
 <br/><br/>
 
@@ -79,7 +117,7 @@ Given functionality:
 
 ## <a href="vi_processor_impl_distr_42.h" target="_blank">`vi_processor_impl_distr_42.h`</a>
 
-Header of <a href="vi_processor_impl_distr_42.h" target="_blank">`vi_processor_impl_distr_42.h`</a>
+Header of <a href="vi_processor_impl_distr_42.cpp" target="_blank">`vi_processor_impl_distr_42.cpp`</a>
 
 <br/><br/>
 
