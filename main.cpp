@@ -6,7 +6,7 @@
 #include "vi_processor_impl_local.h"
 #include "vi_processor_impl_distr_01.h"
 #include "vi_processor_impl_distr_02.h"
-#include "vi_processor_impl_distr_42.h"
+#include "vi_processor_impl_distr_03.h"
 #include "vi_processor_impl_distr_04.h"
 #include "vi_processor_impl_distr_05.h"
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_02(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
-        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_42(args, 0, comm_period)));
+        processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_03(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
         processors.push_back(std::unique_ptr<VI_Processor_Base>(new VI_Processor_Impl_Distr_04(args, 0, comm_period)));
     for(const int& comm_period : comm_periods)
