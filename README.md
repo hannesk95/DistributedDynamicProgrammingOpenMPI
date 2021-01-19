@@ -5,19 +5,19 @@
 
 ## Inhaltsverzeichnis
 
-- [Allgemeines zu diesem Projekt](#algemeines)
-- [Repository-Struktur](#struktur)
-- [Kommmunikationsprotokolle](#protokolle)
-- [Anlegen eines Branches für Evaluierungsprogramm](#eval)
-- [Erstellen des Hauptprogrammes](#hauptprogramm)
-- [Erweitern des Projekts mit Protokollen](#erweitern)
-- [Datenimport](#datenimport)
-- [Evaluation verschiedener Implementierungen](#eval)
-- [Programm ausführen](#ausführung)
-- [Benchmark Vergleich](#vergleich)
-- [OpenMPI installieren](#install)
-- [Gruppen Mitglieder](#mitglieder) 
-- [Anhang](#anhang)
+- [`Allgemeines zu diesem Projekt`](#Allgemeines-zu-diesem-Projekt)
+- [`Repository-Struktur`](#Repository-Struktur)
+- [`Kommmunikationsprotokolle`](#Kommmunikationsprotokolle)
+- [`Anlegen eines Branches für Evaluierungsprogramm`](#Anlegen-eines-Branches-für-Evaluierungsprogramm)
+- [`Erstellen des Hauptprogrammes`](#Erstellen-des-Hauptprogrammes)
+- [`Erweitern des Projekts mit Protokollen`](#Erweitern-des-Projekts-mit-Protokollen)
+- [`Datenimport`](#Datenimport)
+- [`Evaluation verschiedener Implementierungen`](#Evaluation-verschiedener-Implementierungen)
+- [`Programm ausführen`](#Programm-ausführen)
+- [`Benchmark Vergleich`](#Benchmark-Vergleich)
+- [`OpenMPI installieren`](#OpenMPI-installieren)
+- [`Gruppen Mitglieder`](#Gruppen-Mitglieder) 
+- [`Anhang`](#Anhang)
 
 ---
 
@@ -179,7 +179,7 @@ Installer Dateien sind im Ordner <a href="install_files/" target="_blank">`insta
 ```
 ---
 
-## Gruppen Mitglieder:
+## Gruppen Mitglieder
 
 |                             |                             |
 | --------------------------- | --------------------------- |
