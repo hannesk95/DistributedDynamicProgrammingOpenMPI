@@ -1,10 +1,10 @@
-#include "vi_processor_impl_distr_42.h"
+#include "vi_processor_impl_distr_03.h"
 #include <limits>
 #include <algorithm>
 #include <map>
 #include <mpi.h>
 
-bool VI_Processor_Impl_Distr_42::SetParameter(std::string param, float value)
+bool VI_Processor_Impl_Distr_03::SetParameter(std::string param, float value)
 {
     if(param == "comm_period")
     {
@@ -15,14 +15,14 @@ bool VI_Processor_Impl_Distr_42::SetParameter(std::string param, float value)
     return VI_Processor_Base::SetParameter(param, value);
 }
 
-std::map<std::string, float> VI_Processor_Impl_Distr_42::GetParameters()
+std::map<std::string, float> VI_Processor_Impl_Distr_03::GetParameters()
 {
     std::map<std::string, float> parameters = VI_Processor_Base::GetParameters();
     parameters["comm_period"] = comm_period;
     return parameters;
 }
 
-void VI_Processor_Impl_Distr_42::value_iteration_impl(
+void VI_Processor_Impl_Distr_03::value_iteration_impl(
         Eigen::Ref<Eigen::VectorXi> Pi, 
         Eigen::Ref<Eigen::VectorXf> J, 
         const Eigen::Ref<const SpMat_t> P, 
@@ -145,7 +145,7 @@ void VI_Processor_Impl_Distr_42::value_iteration_impl(
 
 }
 
-std::string VI_Processor_Impl_Distr_42::GetName()
+std::string VI_Processor_Impl_Distr_03::GetName()
 {
     return VI_Processor_Base::GetName() + "-" + std::to_string(comm_period);;
 }
