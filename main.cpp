@@ -15,8 +15,8 @@
 int main(int argc, char *argv[])
 {
     MPI_Init(&argc, &argv);
-    std::string data_folder = "../data/data_debug"; // Here can the data be found
-    std::string result_folder = "../results";       // Here shall the evaluation results be stored
+    std::string data_folder = argv[1]; // Here can the data be found
+    std::string result_folder = argv[2];       // Here shall the evaluation results be stored
     std::vector<int> comm_periods{10,50,100,500};   // Communication periods which shall be evaluated
     const int n_runs = 10;                          // Number of evaluation runs
 
