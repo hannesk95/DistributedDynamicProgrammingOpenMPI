@@ -30,11 +30,13 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von Op
 ## Repository-Struktur
 
 - <a href="data/" target="_blank">`data/`</a> - enthält Datensätze
+- <a href="install_files/" target="_blank">`install_files/`</a> - enthält alle benötigten Debian-Dateien zum Installieren von `OpenMPI` [Version 2.2.1]
 - <a href="lib/" target="_blank">`lib/`</a> - enthält alle benötigten Lirbraries
 - <a href="results/" target="_blank">`results/`</a> - enthält die Resultate der Implementierungen
 - <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
 - <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
 - <a href="Makefile" targeT="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
+- <a href="benchmark_visual.py" target="_blank">`benchmark_visual.py`</a> - Skript, dass den Benchmarkvergleich der einzelnen Implementierungen graphisch aufbereitet
 - <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
 - <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptskript, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
 
@@ -50,7 +52,7 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von Op
 | `VI_Processor_Impl_Distr_05`  | `Igather`, `Ibrcast`, `Igatherv`    |
 | `VI_Processor_Impl_Distr_42`  | `Sendrecv`                          |
 
-Umfrangreiche Dokumenation zu möglichen OpenMPI Kommunicationsprotokollen und deren Funktionen: [Princeton Bootcamp Kommunikationsprotokolle](https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf)
+Umfrangreiche Dokumenation zu möglichen OpenMPI Kommunicationsprotokollen und deren Funktionen: [`Princeton Bootcamp Kommunikationsprotokolle`](https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf)
 
 ---
 
@@ -179,11 +181,13 @@ Installer Dateien sind im Ordner <a href="install_files/" target="_blank">`insta
 
 ## Gruppen Mitglieder:
 
-- Stümke, Daniel:             daniel.stuemke@tum.de
-- Christoph, Alexander:       alexander.christoph@tum.de
-- Kiechle, Johannes:          johannes.kiechle@tum.de
-- Gottwald, Martin (Dozent):  martin.gottwald@tum.de
-- Hein, Alice (Dozentin):     alice.hein@tum.de
+|                             |                             |
+| --------------------------- | --------------------------- |
+| Stümke, Daniel              | daniel.stuemke@tum.de       |
+| Christoph, Alexander        | alexander.christoph@tum.de  |
+| Kiechle, Johannes           | johannes.kiechle@tum.de     |
+| Gottwald, Martin (Dozent)   | martin.gottwald@tum.de      |
+| Hein, Alice (Dozentin)      | alice.hein@tum.de           |
 
 ---
 
