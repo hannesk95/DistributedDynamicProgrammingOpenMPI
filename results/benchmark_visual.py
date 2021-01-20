@@ -2,6 +2,7 @@ import os
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 
 def load_data(path):
 
@@ -25,13 +26,13 @@ def load_data(path):
 def autolabel(ax, rects):
     for rect in rects:
         height = rect.get_height()
-        ax.annotate('{:.3f}'.format(height),
+        ax.annotate('{:.4f}'.format(height),
                     xy=(rect.get_x() + rect.get_width() / 2, height),
                     xytext=(0, 3),
                     textcoords="offset points",
-                    ha='center', va='bottom', fontsize=10)
+                    ha='center', va='bottom', fontsize=8)
         
-def plot_benchmark_distr(data):   
+def plot_benchmark_distr(path, data):
 
     times = {}
     comm = []
@@ -77,8 +78,7 @@ def plot_benchmark_distr(data):
     ax.set_xticks(x)
     ax.set_xticklabels(comm)
     ax.set_xlabel('Communication frequency (in epochs)', fontsize=16)
-    ax.legend(fontsize='x-large')
-    
+    ax.legend(fontsize='x-large')    
     
     autolabel(ax, rects1)
     autolabel(ax, rects2)
@@ -88,14 +88,18 @@ def plot_benchmark_distr(data):
     
     fig.tight_layout()
     plt.grid()
-    plt.savefig('./results/benchmark_distr.png')
-    #plt.show()    
+    plt.savefig(os.path.join(path, 'benchmark_distr.png'))
+    print("[INFO] The benchmark visualization plot was successfully stored to: " + path)
     
 def main():
-    
-    result_dir = "results"
-    data = load_data(os.path.join(os.getcwd(), result_dir))
-    plot_benchmark_distr(data)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path", type=str)
+    args = parser.parse_args()    
+
+    result_dir = os.path.join(os.getcwd(), args.path)
+ 
+    data = load_data(result_dir)
+    plot_benchmark_distr(result_dir, data)
     
 if __name__ == "__main__":
     main()

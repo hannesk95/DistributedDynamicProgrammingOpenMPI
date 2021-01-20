@@ -120,28 +120,44 @@ git checkout master
 Dann kann das Projekt kompiliert und ausgeführt werden. Hierfür gibt es mehrere Möglichkeiten:
 
 ```text
-1.  
 
-1.1 # Kompilieren
-    make compile
+1. Lokales Ausführen auf einer pysikalischen Maschine 
+   (Anzahl der dabei gestarteten Prozesse: 2)
 
-1.2 # In build Ordner wechseln
-    cd build
+1.1 make run_debug_local
 
-1.3 # Ausführen (verteiltes rechnen auf mehrern PC's)
-    mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "<Pfad_zu_Daten_Ordner>" "<Pfad_zu_Results_Ordner>"
+-------------------------------------------------------------
 
---------------------------------------------------------
+2. Verteiltes Rechnen auf mehreren pysikalischen Maschinen
+   (Manuelle auswahl des Datensatzes)
 
-2.  # Kompilieren und ausführen 
-    # (lokales rechnen auf Localhost, 2 Prozesse mit dem "data_debug" Datensatz)
-    make run_mpi_local
+2.1 make run_debug (Start mit dem "debug" Datensatz)
 
---------------------------------------------------------
+    oder
+  
+2.2 make run_small (Start mit dem "small" Datensatz)
 
-3.  # Kompilieren und ausführen 
-    # (verteiltes rechnen auf mehreren PC's mit dem "data_debug" Datensatz)
-    make run_mpi_distr
+    oder
+
+2.3 make run_normal (Start mit dem "normal" Datensatz)
+
+-------------------------------------------------------------
+
+3. Verteiltes Rechnen auf mehreren pysikalischen Maschinen
+   (Es werden alle Datensätze sequentiell abgearbeitet)
+
+3.1 make run_all
+
+-------------------------------------------------------------
+
+4. Manuelles Ausführen
+
+1.1 make compile
+
+1.2 cd build
+
+1.3 mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "<Pfad_zu_Daten_Ordner>" "<Pfad_zu_Results_Ordner>" <Anzahl_der_Runs>
+
 ```
 
 Hinweis: Überprüfe, ob die `~/.ssh/config` richtig ist:
