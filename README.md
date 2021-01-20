@@ -36,7 +36,6 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von <a
 - <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
 - <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
 - <a href="Makefile" target="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
-- <a href="benchmark_visual.py" target="_blank">`benchmark_visual.py`</a> - Skript, dass den Benchmarkvergleich der einzelnen Implementierungen graphisch aufbereitet
 - <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
 - <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptskript, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
 
