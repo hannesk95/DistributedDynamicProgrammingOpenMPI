@@ -31,15 +31,15 @@ run: compile run_debug run_small run_normal
 
 run_debug: compile
 	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "../data/data_debug" "../results/data_debug" 20
-	python3 benchmark_visual.py "/results/data_debug/"
+	cd results/ && python3 benchmark_visual.py "/data_debug/"
 
 run_small: compile
 	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "../data/data_small" "../results/data_small" 5
-	python3 benchmark_visual.py "/results/data_small"
+	cd results/ && python3 benchmark_visual.py "/data_small"
 
 run_normal: compile
 	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "../data/data_normal" "../results/data_normal" 1	
-	python3 benchmark_visual.py "/results/data_normal"
+	cd results/ && python3 benchmark_visual.py "/data_normal"
 
 run_mpi_local: compile
 	cd build/ && mpirun -np 2 ./MPI_Project.exe
