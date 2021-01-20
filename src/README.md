@@ -12,9 +12,12 @@ Base Class for all following Implementations of the desired task. Responsible fo
 
 Given functionality:
 - `VI_Processor_Base` - reads all files `.npy` that are needed for the value iteration, transforms them to `Eigen` vectors/SparseMatrix
-- `void debug_message()` - prints given debugging messages for respective processor
 - `void Process()` - function that calls `value_iteration_impl` of respective processor
+- `std::string GetName()` - get name of implementation
+- `bool SetParameter()` - set parameter of implementation
+- `std::map<std::string, float> GetParameters()` - get parameter of implementation
 - `float iteration_step()` - performs the value iteration for given amount of steps (before remerging whole `probability matrix`) on given subset of the `probability matrix`
+- `void debug_message()` - prints given debugging messages for respective processor
 
 <br/><br/>
 
@@ -33,6 +36,9 @@ Header of <a href="vi_processor_base.cpp" target="_blank">`vi_processor_base.cpp
 first implementation of a communication scheme. Using `MPI_Allgatherv`,`MPI_Allreduce` and `MPI_Gatherv`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`.
 
 Given functionality:
+- `std::string GetName()` - get name of implementation
+- `bool SetParameter()` - set parameter of implementation
+- `std::map<std::string, float> GetParameters()` - get parameter of implementation
 - `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
 
 <br/><br/>
@@ -52,6 +58,9 @@ Header of <a href="vi_processor_impl_distr_01.cpp" target="_blank">`vi_processor
 second implementation of a communication scheme. Using `MPI_Send`, `MPI_Recv` and `MPI_Bcast`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`. Logic of communication scheme is similar to `VI_Processor_Impl_Distr_01`
 
 Given functionality:
+- `std::string GetName()` - get name of implementation
+- `bool SetParameter()` - set parameter of implementation
+- `std::map<std::string, float> GetParameters()` - get parameter of implementation
 - `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
 
 <br/><br/>
@@ -71,6 +80,9 @@ Header of <a href="vi_processor_impl_distr_02.cpp" target="_blank">`vi_processor
 third implementation of a communication scheme. Using `MPI_Sendrecv` and `MPI_Gatherv`. Updates `J` every period completely, inherits functionality from `VI_Processor_Base`. Works synchronely
 
 Given functionality:
+- `std::string GetName()` - get name of implementation
+- `bool SetParameter()` - set parameter of implementation
+- `std::map<std::string, float> GetParameters()` - get parameter of implementation
 - `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
 
 <br/><br/>
@@ -90,6 +102,9 @@ Header of <a href="vi_processor_impl_distr_03.cpp" target="_blank">`vi_processor
 third implementation of a communication scheme. Using `MPI_Isend` and `MPI_Irecv`, `MPI_Ibcast` and `MPI_Igatherv`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`. Logic of communication scheme is similar to `VI_Processor_Impl_Distr_02` but non-blocking
 
 Given functionality:
+- `std::string GetName()` - get name of implementation
+- `bool SetParameter()` - set parameter of implementation
+- `std::map<std::string, float> GetParameters()` - get parameter of implementation
 - `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
 
 <br/><br/>
@@ -109,6 +124,9 @@ Header of <a href="vi_processor_impl_distr_04.cpp" target="_blank">`vi_processor
 third implementation of a communication scheme. Using `MPI_Igather`, `MPI_Bcast` and `MPI_Gatherv`. Waits for given amount of periods before re-gathering the updated `J`, inherits functionality from `VI_Processor_Base`. Logic of communication scheme is similar to `VI_Processor_Impl_Distr_01` but non-blocking
 
 Given functionality:
+- `std::string GetName()` - get name of implementation
+- `bool SetParameter()` - set parameter of implementation
+- `std::map<std::string, float> GetParameters()` - get parameter of implementation
 - `void value_iteration_impl()` - concrete implementation of communication scheme, doing the value iteration
 
 <br/><br/>
@@ -128,6 +146,7 @@ Header of <a href="vi_processor_impl_distr_05.cpp" target="_blank">`vi_processor
 local implementation of value iteration without any communication scheme or parallelization. Implemented to use as reference for performance comparisons. Updates `J` every period completely, inherits functionality from `VI_Processor_Base`. Works synchronely
 
 Given functionality:
+- `std::string GetName()` - get name of implementation
 - `void value_iteration_impl()` - concrete implementation of value iteration
 
 <br/><br/>
