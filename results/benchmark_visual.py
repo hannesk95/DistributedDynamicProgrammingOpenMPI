@@ -78,8 +78,7 @@ def plot_benchmark_distr(path, data):
     ax.set_xticks(x)
     ax.set_xticklabels(comm)
     ax.set_xlabel('Communication frequency (in epochs)', fontsize=16)
-    ax.legend(fontsize='x-large')
-    
+    ax.legend(fontsize='x-large')    
     
     autolabel(ax, rects1)
     autolabel(ax, rects2)
@@ -89,23 +88,18 @@ def plot_benchmark_distr(path, data):
     
     fig.tight_layout()
     plt.grid()
-    plt.savefig(os.getcwd() + path + 'benchmark_distr.png')
+    plt.savefig(os.path.join(path, 'benchmark_distr.png'))
     print("[INFO] The benchmark visualization plot was successfully stored to: " + path)
     
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("path", type=str)
-    args = parser.parse_args()
+    args = parser.parse_args()    
 
-    #result_dir = "results"
-    #print(os.path.join(os.getcwd(), result_dir))
-
-    result_dir = os.getcwd() + args.path
-    #print(result_dir)
-    #print(args.path)
-    #data = load_data(os.path.join(os.getcwd(), result_dir))
+    result_dir = os.path.join(os.getcwd(), args.path)
+ 
     data = load_data(result_dir)
-    plot_benchmark_distr(args.path, data)
+    plot_benchmark_distr(result_dir, data)
     
 if __name__ == "__main__":
     main()
