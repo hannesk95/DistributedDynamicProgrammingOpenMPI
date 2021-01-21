@@ -3,12 +3,24 @@ import glob
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+import re
+
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+def natural_keys(text):
+    '''
+    alist.sort(key=natural_keys) sorts in human order
+    http://nedbatchelder.com/blog/200712/human_sorting.html
+    (See Toothy's implementation in the comments)
+    '''
+    return [ atoi(c) for c in re.split(r'(\d+)', text) ]
 
 def load_data(path):
 
     database = {}
-    filenames = glob.glob(os.path.join(path, "*.npz"))
-
+    filenames = sorted(glob.glob(os.path.join(path, "*.npz")), key = natural_keys)
+    
     for file in filenames:
         data = np.load(file)
         key = file.split("/")[-1]
@@ -49,7 +61,7 @@ def plot_benchmark_distr(path, data):
             times[result[0]] = {}
     
     comm = np.array(comm)
-    comm = list(np.unique(comm))
+    comm = sorted(np.unique(comm), key = natural_keys)
     labels = list(times.keys())    
     
     for label in list(data.keys()):
