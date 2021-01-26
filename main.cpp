@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
                 }
                 // save
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "mean_execution_time", t_mean.data() + j, {1}, "w");
-                cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "mean_execution_time", t_var.data() + j, {1}, "a");
+                cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "var_execution_time", t_var.data() + j, {1}, "a");
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "MSE_J", mse_J.data() + j, {1}, "a");
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "errors_Pi", err_Pi.data() + j, {1}, "a");
                 j += 1;

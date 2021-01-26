@@ -1,3 +1,1 @@
-/data_debug/*.npz
-/data_small/*.npz
-/data_normal/*.npz
+/data_*/*.npz
