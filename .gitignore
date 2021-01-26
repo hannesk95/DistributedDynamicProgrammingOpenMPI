@@ -1,5 +1,6 @@
 .vscode/
 build/
+documentation/
 .idea/
 cmake-build-debug/
 .ipynb_checkpoints
