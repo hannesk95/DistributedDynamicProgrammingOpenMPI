@@ -35,7 +35,8 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von <a
 - <a href="results/" target="_blank">`results/`</a> - enthält die Resultate der Implementierungen
 - <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
 - <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
-- <a href="Makefile" target="Makefile">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
+- <a href="Doxyfile" target="_blank">`Doxyfile`</a> - enthält ausführliche Dokumentation des Codes
+- <a href="Makefile" target="_blank">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
 - <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
 - <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptskript, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
 
@@ -178,10 +179,18 @@ Host *
 ```
 ## Benchmark Vergleich
 
-In unten stehender Grafik ist ein Benchmark Vergleich über alle implementierten Kommunikationsprotokolle zu sehen.
+In unten stehenden Grafiken sind Benchmark Vergleiche über alle implementierten Kommunikationsprotokolle für die verschiedenen Datensätze zu sehen.
+
+<a href="data/data_debug/" target="_blank">`data_debug/`</a>
 
 <h2 align="center">
   <img src="results/data_debug/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
+</h2>
+
+<a href="data/data_small/" target="_blank">`data_small/`</a>
+
+<h2 align="center">
+  <img src="results/data_small/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
 ---

@@ -17,7 +17,7 @@ remove_build_directories:
 remove_vs_folder:
 	rm -rf .vs/
 
-compile: remove_build_directories convert_pickle
+compile: remove_build_directories convert_pickle documentation
 	mkdir -p build/
 	cd build/ && cmake -DCMAKE_BUILD_TYPE=Release ..
 	$(MAKE) -C build/

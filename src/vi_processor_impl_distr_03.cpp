@@ -137,7 +137,7 @@ void VI_Processor_Impl_Distr_03::value_iteration_impl(
                 // If convergence rate is below threshold stop
                 if(error <= tolerance)
                 {   
-                    debug_message("Converged after " + std::to_string(t) + " iterations");
+                    debug_message("Converged after " + std::to_string(t) + " iterations with communication period " + std::to_string(comm_period));
                     break;
                 } 
                 error = 0;
