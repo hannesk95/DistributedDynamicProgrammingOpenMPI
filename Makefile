@@ -46,3 +46,6 @@ run_debug_local: compile
 
 convert_pickle:
 	cd data/ && python3 convert_pickle.py
+
+documentation:
+	doxygen Doxyfile

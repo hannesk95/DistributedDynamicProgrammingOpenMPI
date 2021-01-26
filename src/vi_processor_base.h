@@ -73,17 +73,10 @@ public:
     virtual std::map<std::string, float> GetParameters();
 
 private:
+    vi_data_args_t args; // Data arguments (file locations)
+
     unsigned int n_states; // Number of possible actions
     unsigned int n_stars; // Number of stars in navigation task
-
-    std::vector<int> P_indptr; // IndexPtr of probability matrix [Integer vector]
-    std::vector<int> P_indices; // Indices of probability matrix [Integer vector]
-    std::vector<float> P_data; // Data of probability matrix [Float vector]
-    std::vector<int64_t> P_shape; // Shape of probability matrix [Integer64_t vector]
-
-    std::unique_ptr<Eigen::Map<SpMat_t>> P; // probability matrix [mapped Eigen Sparse Matrix pointer]
-    std::unique_ptr<Eigen::VectorXf> J; // J [Eigen Float vector pointer]
-    std::unique_ptr<Eigen::VectorXi> Pi; // Pi [Eigen Integer vector pointer]
 
 protected:
     const int root_id; // Id of processor which shall provide the results [Integer]
