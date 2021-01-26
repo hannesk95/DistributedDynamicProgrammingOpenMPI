@@ -7,7 +7,7 @@
 
 /**
  * Constructor of Base class for all implementations
- * @param args: arguments dictionary with path to respective .npy files [const Dictionary reference]
+ * @param _args: arguments dictionary with path to respective .npy files [const Dictionary reference]
  * @param _root_id: id of root processor [const Integer]
  * @param _alpha: discount factor for value iteration [const Float]
  * @param _tolerance: tolerance for break condition [const Float]
