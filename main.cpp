@@ -110,6 +110,9 @@ int main(int argc, char *argv[])
             std::cout << "========= Mean execution times =========" << std::endl;
             Eigen::VectorXf t_mean =  measurements.colwise().mean();
             std::cout << t_mean << std::endl;
+            std::cout << "========= execution times std =========" << std::endl;
+            Eigen::VectorXf t_std = (measurements.rowwise() - measurements.colwise().mean()).array().square().colwise().mean();
+            std::cout << t_std << std::endl;
             // Print mean squared error of J vector for each processor implementation
             std::cout << "========= MSE's for J vectors =========" << std::endl;
             std::cout << mse_J << std::endl;
@@ -129,6 +132,7 @@ int main(int argc, char *argv[])
                 }
                 // save
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "mean_execution_time", t_mean.data() + j, {1}, "w");
+                cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "mean_execution_time", t_std.data() + j, {1}, "a");
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "MSE_J", mse_J.data() + j, {1}, "a");
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "errors_Pi", err_Pi.data() + j, {1}, "a");
                 j += 1;
