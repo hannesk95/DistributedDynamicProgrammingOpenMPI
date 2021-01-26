@@ -12,8 +12,8 @@
  * @param _alpha: discount factor for value iteration [const Float]
  * @param _tolerance: tolerance for break condition [const Float]
  */
-VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root_id, const float _alpha, const float _tolerance)
-    : alpha(_alpha), tolerance(_tolerance), root_id(_root_id)
+VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& _args, const int _root_id, const float _alpha, const float _tolerance)
+    : alpha(_alpha), tolerance(_tolerance), root_id(_root_id), args(_args)
 {
     // Load Parameters
     cnpy::NpyArray raw_fuel_capacity = cnpy::npz_load(args.Param_npz_dict_filename, "fuel_capacity");
@@ -26,23 +26,6 @@ VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root
     // convert the content
     n_stars = raw_number_stars.as_vec<int>()[0];
     n_states = raw_max_controls.as_vec<int>()[0];
-
-    // Load Matrix
-    cnpy::NpyArray raw_indptr = cnpy::npy_load(args.P_npy_indptr_filename);
-    cnpy::NpyArray raw_indices = cnpy::npy_load(args.P_npy_indices_filename);
-    cnpy::NpyArray raw_data = cnpy::npy_load(args.P_npy_data_filename);
-    cnpy::NpyArray raw_shape = cnpy::npy_load(args.P_npy_shape_filename);
-
-    // convert the content
-    P_indptr = std::move(raw_indptr.as_vec<int>());
-    P_indices = std::move(raw_indices.as_vec<int>());
-    P_data = std::move(raw_data.as_vec<float>());
-    P_shape = std::move(raw_shape.as_vec<int64_t>());
-
-    // init SparseMatrix (Use P.get() to get raw pointer)
-    P = std::move(std::unique_ptr<Eigen::Map<SpMat_t>>(new Eigen::Map<SpMat_t>(P_shape[0], P_shape[1], P_data.size(), P_indptr.data(), P_indices.data(), P_data.data())));
-    J = std::move(std::unique_ptr<Eigen::VectorXf>(new Eigen::VectorXf(P_shape[1])));
-    Pi = std::move(std::unique_ptr<Eigen::VectorXi>(new Eigen::VectorXi(P_shape[1])));
 }
 
 /**
@@ -53,14 +36,32 @@ VI_Processor_Base::VI_Processor_Base(const vi_data_args_t& args, const int _root
  */
 void VI_Processor_Base::Process(std::vector<int>& Pi_out, std::vector<float>& J_out, const unsigned int max_iter)
 {
+
+    // Load Matrix
+    cnpy::NpyArray raw_indptr = cnpy::npy_load(args.P_npy_indptr_filename);
+    cnpy::NpyArray raw_indices = cnpy::npy_load(args.P_npy_indices_filename);
+    cnpy::NpyArray raw_data = cnpy::npy_load(args.P_npy_data_filename);
+    cnpy::NpyArray raw_shape = cnpy::npy_load(args.P_npy_shape_filename);
+
+    // convert the content
+    auto P_indptr = raw_indptr.as_vec<int>();
+    auto P_indices = raw_indices.as_vec<int>();
+    auto P_data = raw_data.as_vec<float>();
+    auto P_shape = raw_shape.as_vec<int64_t>();
+
+    // init SparseMatrix 
+    auto P = Eigen::Map<SpMat_t>(P_shape[0], P_shape[1], P_data.size(), P_indptr.data(), P_indices.data(), P_data.data());
+    auto J = Eigen::VectorXf(P_shape[1]);
+    auto Pi = Eigen::VectorXi(P_shape[1]);
+
     // fill initialized J and Pi (from constructor) with 0s
-    J.get()->fill(0);
-    Pi.get()->fill(0);
+    J.fill(0);
+    Pi.fill(0);
     // do actual value iteration
-    value_iteration_impl(*Pi.get(), *J.get(), *P.get(), max_iter);
+    value_iteration_impl(Pi, J, P, max_iter);
     // set params to be calculated values
-    Pi_out.assign(Pi.get()->data(), Pi.get()->data() + Pi.get()->size());
-    J_out.assign(J.get()->data(), J.get()->data() + J.get()->size());
+    Pi_out.assign(Pi.data(), Pi.data() + Pi.size());
+    J_out.assign(J.data(), J.data() + J.size());
 }
 
 /**
