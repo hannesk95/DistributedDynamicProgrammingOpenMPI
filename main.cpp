@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         // set parameters
         std::string data_folder   = argv[1];       // Here can the data be found
         std::string result_folder = argv[2];       // Here shall the evaluation results be stored
-        std::vector<int> comm_periods{10,50,100,500};   // Communication periods which shall be evaluated
+        std::vector<int> comm_periods{ 2, 5, 10, 20};   // Communication periods which shall be evaluated
         const int n_runs = std::stoi(argv[3]);          // Number of evaluation runs
         vi_data_args_t args = {
             .P_npy_indptr_filename      = data_folder + "/P_indptr.npy",

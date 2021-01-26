@@ -53,14 +53,14 @@ def main():
         database = extend_database(child_folder, database)
 
     dataframe = pd.DataFrame(database)
-    dataframe['exec_time_us_log'] = np.log10(dataframe['exec_time'] * 1e9)
+    dataframe['exec_time_us_log'] = np.log2(dataframe['exec_time'] * 1e9)
     g = sns.catplot(
         data=dataframe, kind="bar",
         x="dataset", y="exec_time_us_log", hue="np",
         palette="dark", alpha=.6, height=6
     )
     g.despine(left=True)
-    g.set_axis_labels("", "log10 of mean execution time (us)")
+    g.set_axis_labels("", "log2 of mean execution time (us)")
     g.legend.set_title("Number of processes")
     g.savefig(os.path.join(parent_folder,"benchmark_np.png"))
     
