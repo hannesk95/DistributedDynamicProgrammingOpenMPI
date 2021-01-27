@@ -34,6 +34,10 @@ processes the benchmark comparison for all implementations graphically
 
 benchmark comparison between number of used processors
 
+<h2 align="center">
+  <img src="benchmark_np.png" alt="Benchmark Vergleich" width="400px" />
+</h2>
+
 <br/><br/>
 
 -------
