@@ -32,7 +32,7 @@ run_debug: compile
 		cd results/ && python3 benchmark_comm_period.py "data_debug-$$NP/" ; \
 		cd .. ; \
 	done
-	python3 benchmark_np.py "results/"
+	python3 results/benchmark_np.py "results/"
 
 run_small: compile
 	for NP in 2 4 6 8 ; do \
@@ -42,7 +42,7 @@ run_small: compile
 		cd results/ && python3 benchmark_comm_period.py "data_small-$$NP/" ; \
 		cd .. ; \
 	done
-	python3 benchmark_np.py "results/"
+	python3 results/benchmark_np.py "results/"
 
 run_normal: compile
 	for NP in 2 4 6 8 ; do \
@@ -52,7 +52,7 @@ run_normal: compile
 		cd results/ && python3 benchmark_comm_period.py "data_normal-$$NP/" ; \
 		cd .. ; \
 	done
-	python3 benchmark_np.py "results/"
+	python3 results/benchmark_np.py "results/"
 
 run_debug_local: compile
 	for NP in 2 4 ; do \
@@ -62,7 +62,7 @@ run_debug_local: compile
 		cd results/ && python3 benchmark_comm_period.py "data_debug-$$NP/" ; \
 		cd .. ; \
 	done
-	python3 benchmark_np.py "results/"
+	python3 results/benchmark_np.py "results/"
 
 convert_pickle:
 	cd data/ && python3 convert_pickle.py
