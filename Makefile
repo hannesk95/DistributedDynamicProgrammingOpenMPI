@@ -25,24 +25,44 @@ compile: remove_build_directories convert_pickle documentation
 run_all: run_debug run_small run_normal
 
 run_debug: compile
-	mkdir -p results/data_debug
-	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "../data/data_debug" "../results/data_debug" 10
-	cd results/ && python3 benchmark_visual.py "data_debug/"
+	for NP in 2 4 6 8 ; do \
+		mkdir -p results/data_debug-$$NP ; \
+		cd build/ && mpirun -np $$NP -hostfile ../hostfile ./MPI_Project.exe "../data/data_debug" "../results/data_debug-$$NP" 10 ; \
+		cd .. ; \
+		cd results/ && python3 benchmark_comm_period.py "data_debug-$$NP/" ; \
+		cd .. ; \
+	done
+	python3 results/benchmark_np.py "results/"
 
 run_small: compile
-	mkdir -p results/data_small
-	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "../data/data_small" "../results/data_small" 3
-	cd results/ && python3 benchmark_visual.py "data_small"
+	for NP in 2 4 6 8 ; do \
+		mkdir -p results/data_small-$$NP ; \
+		cd build/ && mpirun -np $$NP -hostfile ../hostfile ./MPI_Project.exe "../data/data_small" "../results/data_small-$$NP" 3 ; \
+		cd .. ; \
+		cd results/ && python3 benchmark_comm_period.py "data_small-$$NP/" ; \
+		cd .. ; \
+	done
+	python3 results/benchmark_np.py "results/"
 
 run_normal: compile
-	mkdir -p results/data_normal
-	cd build/ && mpirun -np 6 -hostfile ../hostfile ./MPI_Project.exe "../data/data_normal" "../results/data_normal" 1	
-	cd results/ && python3 benchmark_visual.py "data_normal"
+	for NP in 2 4 6 8 ; do \
+		mkdir -p results/data_normal-$$NP ; \
+		cd build/ && mpirun -np $$NP -hostfile ../hostfile ./MPI_Project.exe "../data/data_normal" "../results/data_normal-$$NP" 1	 ; \
+		cd .. ; \
+		cd results/ && python3 benchmark_comm_period.py "data_normal-$$NP/" ; \
+		cd .. ; \
+	done
+	python3 results/benchmark_np.py "results/"
 
 run_debug_local: compile
-	mkdir -p results/data_debug
-	cd build/ && mpirun -np 2 ./MPI_Project.exe "../data/data_debug" "../results/data_debug" 10
-	cd results/ && python3 benchmark_visual.py "data_debug/"
+	for NP in 2 4 ; do \
+		mkdir -p results/data_debug-$$NP ; \
+		cd build/ && mpirun -np $$NP ./MPI_Project.exe "../data/data_debug" "../results/data_debug-$$NP" 10 ; \
+		cd .. ; \
+		cd results/ && python3 benchmark_comm_period.py "data_debug-$$NP/" ; \
+		cd .. ; \
+	done
+	python3 results/benchmark_np.py "results/"
 
 convert_pickle:
 	cd data/ && python3 convert_pickle.py

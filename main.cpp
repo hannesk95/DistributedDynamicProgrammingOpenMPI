@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         // set parameters
         std::string data_folder   = argv[1];       // Here can the data be found
         std::string result_folder = argv[2];       // Here shall the evaluation results be stored
-        std::vector<int> comm_periods{10,50,100,500};   // Communication periods which shall be evaluated
+        std::vector<int> comm_periods{ 2, 5, 10, 20};   // Communication periods which shall be evaluated
         const int n_runs = std::stoi(argv[3]);          // Number of evaluation runs
         vi_data_args_t args = {
             .P_npy_indptr_filename      = data_folder + "/P_indptr.npy",
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
                 }
                 // save
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "mean_execution_time", t_mean.data() + j, {1}, "w");
-                cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "mean_execution_time", t_var.data() + j, {1}, "a");
+                cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "var_execution_time", t_var.data() + j, {1}, "a");
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "MSE_J", mse_J.data() + j, {1}, "a");
                 cnpy::npz_save(result_folder + "/" + process->GetName() + ".npz", "errors_Pi", err_Pi.data() + j, {1}, "a");
                 j += 1;
