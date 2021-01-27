@@ -181,16 +181,16 @@ Host *
 
 In unten stehenden Grafiken sind Benchmark Vergleiche über alle implementierten Kommunikationsprotokolle für die verschiedenen Datensätze zu sehen.
 
-<a href="data/data_debug/" target="_blank">`data_debug/`</a>
+<a href="data/data_debug-4/" target="_blank">`data_debug/`</a>
 
 <h2 align="center">
-  <img src="results/data_debug/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
+  <img src="results/data_debug-4/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
-<a href="data/data_small/" target="_blank">`data_small/`</a>
+<a href="data/data_small-4/" target="_blank">`data_small/`</a>
 
 <h2 align="center">
-  <img src="results/data_small/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
+  <img src="results/data_small-4/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
 ---
