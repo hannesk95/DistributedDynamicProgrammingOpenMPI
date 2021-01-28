@@ -156,6 +156,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     ///////////////////////////////////////////////
                     // Do some other computations here if needed //
                     ///////////////////////////////////////////////
+                    MPI_Wait(&request, &status);
 
                     // Generate Eigen style vector of received data
                     Eigen::Map<Eigen::VectorXf> J_sub(J_buffer.data(), recv_workload);
