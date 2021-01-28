@@ -22,6 +22,14 @@ folders containing the results for the small dataset (with respective number of 
 
 -------
 
+## <a href='data_normal-2/' target='_blank'>`data_normal-2/`</a> --- <a href='data_normal-4/' target='_blank'>`data_normal-4/`</a> --- <a href='data_normal-6/' target='_blank'>`data_normal-6/`</a> --- <a href='data_normal-8/' target='_blank'>`data_normal-8/`</a>
+
+folders containing the results for the big dataset (with respective number of used processors), contains the most data. For evaluation purposes
+
+<br/><br/>
+
+-------
+
 ## <a href="benchmark_comm_period.py" target="_blank">`benchmark_comm_period.py`</a>
 
 processes the benchmark comparison for all implementations graphically
