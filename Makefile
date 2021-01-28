@@ -37,7 +37,7 @@ run_debug: compile
 run_small: compile
 	for NP in 2 4 6 8 ; do \
 		mkdir -p results/data_small-$$NP ; \
-		cd build/ && mpirun -np $$NP -hostfile ../hostfile ./MPI_Project.exe "../data/data_small" "../results/data_small-$$NP" 3 ; \
+		cd build/ && mpirun -np $$NP -hostfile ../hostfile ./MPI_Project.exe "../data/data_small" "../results/data_small-$$NP" 1 ; \
 		cd .. ; \
 		cd results/ && python3 benchmark_comm_period.py "data_small-$$NP/" ; \
 		cd .. ; \
