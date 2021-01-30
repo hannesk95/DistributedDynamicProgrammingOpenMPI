@@ -156,7 +156,7 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     ///////////////////////////////////////////////
                     // Do some other computations here if needed //
                     ///////////////////////////////////////////////
-                    MPI_Wait(&request, &status);
+                    MPI_Wait(&request, &status); // Blocks and waits for destination process to receive data
 
                     // Generate Eigen style vector of received data
                     Eigen::Map<Eigen::VectorXf> J_sub(J_buffer.data(), recv_workload);
@@ -169,10 +169,8 @@ void VI_Processor_Impl_Distr_04::value_iteration_impl(
                     {
                         error = recv_max_diff;
                     }
-
-                    J.segment(source_rank * processor_workload, recv_workload) = J_sub;
                     // update J
-                    MPI_Wait(&request, &status); // Blocks and waits for destination process to receive data
+                    J.segment(source_rank * processor_workload, recv_workload) = J_sub;
                 }
             }
             else throw std::runtime_error("Something strange happened!");
