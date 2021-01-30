@@ -43,16 +43,46 @@ def autolabel(ax, rects):
                     xytext=(0, 3),
                     textcoords="offset points",
                     ha='center', va='bottom', fontsize=8)
+        
+def plot_benchmark_distr(path, data):
 
-def plot_mean_exec_time(mean_times, x, width, path, comm):
-
+    times = {}
+    comm = []
+    labels = []
+    
+    for label in list(data.keys()):
+        result = label.split("-")
+        
+        
+        if any(x in label for x in ["Local", "local"]):
+            continue
+        else:                
+            comm.append(result[-1])
+            times[result[0]] = {}
+    
+    comm = np.array(comm)
+    comm = sorted(np.unique(comm), key = natural_keys)
+    labels = list(times.keys())    
+    
+    for label in list(data.keys()):
+        scheme = label.split("-")[0]
+        freq = label.split("-")[-1]
+        
+        if(scheme == freq):
+            continue
+        
+        times[scheme][freq] = data[label]['mean_execution_time'][0]
+        
+    x = np.arange(len(comm))
+    width = 0.1
+    
     fig, ax = plt.subplots(figsize=(16,8))
     plt.rcParams['xtick.labelsize']=16
     plt.rcParams['ytick.labelsize']=16
 
     rects = []
-    for i in range(mean_times.keys().__len__()):
-        rects.append(ax.bar(x + (i * 0.12 - 0.24), mean_times[list(mean_times.keys())[i]].values(), width, label='Scheme: ' + list(mean_times.keys())[i]))
+    for i in range(times.keys().__len__()):
+        rects.append(ax.bar(x + (i * 0.12 - 0.24), times[list(times.keys())[i]].values(), width, label='Scheme: ' + list(times.keys())[i]))
     
     ax.set_ylabel('Mean execution time (in seconds)', fontsize=16)
     ax.set_title('Benchmark comparison among communication schemes', fontsize=20)
@@ -68,72 +98,6 @@ def plot_mean_exec_time(mean_times, x, width, path, comm):
     plt.grid()
     plt.savefig(os.path.join(path, 'benchmark_distr.png'))
     print("[INFO] The benchmark visualization plot was successfully stored to: " + path)
-
-def plot_var_exec_time(var_times, x, width, path, comm):
-
-    fig, ax = plt.subplots(figsize=(16,8))
-    plt.rcParams['xtick.labelsize']=16
-    plt.rcParams['ytick.labelsize']=16
-
-    rects = []
-    for i in range(var_times.keys().__len__()):
-        rects.append(ax.bar(x + (i * 0.12 - 0.24), var_times[list(var_times.keys())[i]].values(), width, label='Scheme: ' + list(var_times.keys())[i]))
-    
-    ax.set_ylabel('Variance of execution time (in milliseconds)', fontsize=16)
-    ax.set_title('Variance execution time comparison among communication schemes', fontsize=20)
-    ax.set_xticks(x)
-    ax.set_xticklabels(comm)
-    ax.set_xlabel('Communication frequency (in epochs)', fontsize=16)
-    ax.legend(fontsize='x-large')    
-    
-    for rect in rects:
-        autolabel(ax, rect)
-    
-    fig.tight_layout()
-    plt.grid()
-    plt.savefig(os.path.join(path, 'var_distr.png'))
-    print("[INFO] The variance visualization plot was successfully stored to: " + path)
-
-        
-def visualize(path, data):
-
-    mean_times = {}
-    var_times = {}
-    comm = []
-    labels = []
-    
-    for label in list(data.keys()):
-        result = label.split("-")
-        
-        
-        if any(x in label for x in ["Local", "local"]):
-            continue
-        else:                
-            comm.append(result[-1])
-            mean_times[result[0]] = {}
-            var_times[result[0]] = {}
-    
-    comm = np.array(comm)
-    comm = sorted(np.unique(comm), key = natural_keys)
-    labels = list(mean_times.keys())    
-    
-    for label in list(data.keys()):
-        scheme = label.split("-")[0]
-        freq = label.split("-")[-1]
-        
-        if(scheme == freq):
-            continue
-        
-        mean_times[scheme][freq] = data[label]['mean_execution_time'][0]
-        var_times[scheme][freq] = data[label]['var_execution_time'][0] * 1000
-        
-    x = np.arange(len(comm))
-    width = 0.1
-
-    plot_mean_exec_time(mean_times, x, width, path, comm)
-    plot_var_exec_time(var_times, x, width, path, comm)
-    
-    
     
 def main():
     parser = argparse.ArgumentParser()
@@ -143,7 +107,7 @@ def main():
     result_dir = os.path.join(os.getcwd(), args.path)
  
     data = load_data(result_dir)
-    visualize(result_dir, data)
+    plot_benchmark_distr(result_dir, data)
     
 if __name__ == "__main__":
     main()
