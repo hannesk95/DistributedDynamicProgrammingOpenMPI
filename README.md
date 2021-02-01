@@ -193,6 +193,12 @@ In unten stehenden Grafiken sind Benchmark Vergleiche über alle implementierten
   <img src="results/data_small-4/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
+<a href="data/data_normal-4/" target="_blank">`data_normal/`</a>
+
+<h2 align="center">
+  <img src="results/data_normal-4/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
+</h2>
+
 ---
 
 ## OpenMPI installieren
