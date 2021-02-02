@@ -8,7 +8,6 @@
 - [`Allgemeines zu diesem Projekt`](#allgemeines-zu-diesem-projekt)
 - [`Repository-Struktur`](#repository-struktur)
 - [`Kommmunikationsprotokolle`](#kommmunikationsprotokolle)
-- [`Anlegen eines Branches für Evaluierungsprogramm`](#anlegen-eines-branches-für-evaluierungsprogramm)
 - [`Erstellen des Hauptprogrammes`](#erstellen-des-hauptprogrammes)
 - [`Erweitern des Projekts mit Protokollen`](#erweitern-des-projekts-mit-protokollen)
 - [`Datenimport`](#datenimport)
@@ -57,12 +56,6 @@ Aus Simplifikationsgründen - vor allem da die einzelnen Namen der Implementieru
 Umfangreiche Dokumenation zu möglichen <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> Kommunicationsprotokollen und deren Funktionen: [`Princeton Bootcamp Kommunikationsprotokolle`](https://princetonuniversity.github.io/PUbootcamp/sessions/parallel-programming/Intro_PP_bootcamp_2018.pdf) bzw. <a href="https://www.open-mpi.org/doc/v2.1/" target="_blank">`offizielle Dokumentation der genutzten OpenMPI Version [2.1.1]`</a>. Für Vergleichszwecke wurde <a href="src/vi_processor_impl_local.cpp" target="_blank">`VI_Processor_Impl_Local`</a> implementiert, welche die Implementation der synchronen `Value Iteration` aus Hausaufgabe 2 ist
 
 Nähere Informationen über die einzelnen Implementierungen können in <a href="src/" target="_blank">`src/`</a> bzw. den einzelnen Skripts selbst nachgelesen werden
-
----
-
-## Anlegen eines Branches für Evaluierungsprogramm
-
-Das Evaluierungsprogramm soll nur dazu dienen die performanteste Implementierung zu ermitteln. Für die eigentliche Value Iteration Aufgabe erstellen wir im Master-Branch eine <a href="main.cpp" target="_blank">`main.cpp`</a> Datei welcher wir z.B. via Kommandozeilenargumenten den Ordner zu den Daten sowie den Pfad in dem die Ergebnisse gespeichert werden sollen angeben.
 
 ---
 
