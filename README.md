@@ -201,6 +201,14 @@ In unten stehenden Grafiken sind Benchmark Vergleiche über alle implementierten
 
 ---
 
+## Ausführungsabweichung
+
+<h2 align="center">
+  <img src="results/data_debug-8/var_distr.png" alt="Varianz Vergleich" width="800px" />
+</h2>
+
+---
+
 ## OpenMPI installieren
 
 Installer Dateien sind im Ordner <a href="install_files/" target="_blank">`install_files/`</a> abgelegt und müssen in nachfolgender Reihenfolge installiert werden (Linux Umgebung: Ubuntu, WSL2, etc.). Anschließend ist Version `2.2.1` installiert.
