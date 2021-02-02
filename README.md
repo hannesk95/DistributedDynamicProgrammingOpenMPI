@@ -162,31 +162,33 @@ Host *
   ForwardX11 yes
   Compression yes
 ```
-## Benchmark Vergleich
+## Benchmark Vergleich - 8 Prozessoren
 
 In unten stehenden Grafiken sind Benchmark Vergleiche über alle implementierten Kommunikationsprotokolle für die verschiedenen Datensätze zu sehen.
 
-<a href="data/data_debug-4/" target="_blank">`data_debug/`</a>
+<a href="data/data_debug-8/" target="_blank">`data_debug/`</a>
 
 <h2 align="center">
-  <img src="results/data_debug-4/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
+  <img src="results/data_debug-8/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
-<a href="data/data_small-4/" target="_blank">`data_small/`</a>
+<a href="data/data_small-8/" target="_blank">`data_small/`</a>
 
 <h2 align="center">
-  <img src="results/data_small-4/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
+  <img src="results/data_small-8/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
-<a href="data/data_normal-4/" target="_blank">`data_normal/`</a>
+<a href="data/data_normal-8/" target="_blank">`data_normal/`</a>
 
 <h2 align="center">
-  <img src="results/data_normal-4/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
+  <img src="results/data_normal-8/benchmark_distr.png" alt="Benchmark Vergleich" width="800px" />
 </h2>
 
 ---
 
 ## Ausführungsabweichung
+
+In der darunter zu sehenden Grafik wird ein Varianz Plot präsentiert, der die Abweichung der Ausführungzeiten zeigt. Dieser wurde nur für den Fall des [`data_debug`](data_debug/) Datensatzes generiert, da die beiden anderen Datensätze [`data_small`](data_small/) und [`data_normal`](data_normal/) jeweils nur einmal durchlaufen und es somit keine Varianz gibt. 
 
 <h2 align="center">
   <img src="results/data_debug-8/var_distr.png" alt="Varianz Vergleich" width="800px" />
