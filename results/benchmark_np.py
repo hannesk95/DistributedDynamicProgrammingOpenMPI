@@ -33,6 +33,16 @@ def extend_database(folder, database):
     np = int(m.group(2))
     dataset = load_data(folder)
     if bool(dataset):
+        database = [
+            *database,
+            {
+                'dataset': dataset_name,
+                'np': 1,
+                'impl_name': "Local",
+                'exec_time': dataset["Local"]["mean_execution_time"][0]
+            }
+        ]
+        del dataset["Local"]
         (best_impl_name,best_impl) = min(dataset.items(), key=lambda x: x[1]['mean_execution_time'][0])
         database = [ 
             *database,
@@ -48,6 +58,7 @@ def extend_database(folder, database):
 def main():
     parent_folder = sys.argv[1]
     child_folders = glob.glob(os.path.join(parent_folder, "*/"))
+    child_folders = [*child_folders[:4], *child_folders[8:], *child_folders[4:8]]
     database = []
     for child_folder in child_folders:
         database = extend_database(child_folder, database)
