@@ -44,7 +44,7 @@ def autolabel(ax, rects):
                     textcoords="offset points",
                     ha='center', va='bottom', fontsize=8)
 
-def plot_mean_exec_time(mean_times, x, width, path, comm):
+def plot_mean_exec_time(mean_times, x, width, path, comm, met):
 
     fig, ax = plt.subplots(figsize=(16,8))
     plt.rcParams['xtick.labelsize']=16
@@ -54,6 +54,7 @@ def plot_mean_exec_time(mean_times, x, width, path, comm):
     for i in range(mean_times.keys().__len__()):
         rects.append(ax.bar(x + (i * 0.12 - 0.24), mean_times[list(mean_times.keys())[i]].values(), width, label='Scheme: ' + list(mean_times.keys())[i]))
     
+    ax.axhline(y = met, label = "Local implementation", color = "black")
     ax.set_ylabel('Mean execution time (in seconds)', fontsize=16)
     ax.set_title('Benchmark comparison among communication schemes', fontsize=20)
     ax.set_xticks(x)
@@ -69,7 +70,7 @@ def plot_mean_exec_time(mean_times, x, width, path, comm):
     plt.savefig(os.path.join(path, 'benchmark_distr.png'))
     print("[INFO] The benchmark visualization plot was successfully stored to: " + path)
 
-def plot_var_exec_time(var_times, x, width, path, comm):
+def plot_var_exec_time(var_times, x, width, path, comm, vet):
 
     fig, ax = plt.subplots(figsize=(16,8))
     plt.rcParams['xtick.labelsize']=16
@@ -79,6 +80,7 @@ def plot_var_exec_time(var_times, x, width, path, comm):
     for i in range(var_times.keys().__len__()):
         rects.append(ax.bar(x + (i * 0.12 - 0.24), var_times[list(var_times.keys())[i]].values(), width, label='Scheme: ' + list(var_times.keys())[i]))
     
+    ax.axhline(y = vet, label = "Local implementation", color = "black")
     ax.set_ylabel('Variance of execution time (in milliseconds)', fontsize=16)
     ax.set_title('Variance execution time comparison among communication schemes', fontsize=20)
     ax.set_xticks(x)
@@ -130,8 +132,8 @@ def visualize(path, data):
     x = np.arange(len(comm))
     width = 0.1
 
-    plot_mean_exec_time(mean_times, x, width, path, comm)
-    plot_var_exec_time(var_times, x, width, path, comm)
+    plot_mean_exec_time(mean_times, x, width, path, comm, data["Local"]["mean_execution_time"][0])
+    plot_var_exec_time(var_times, x, width, path, comm, data["Local"]["var_execution_time"][0])
     
     
     
