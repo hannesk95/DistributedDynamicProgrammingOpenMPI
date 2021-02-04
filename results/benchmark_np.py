@@ -81,9 +81,9 @@ def main():
     dataframe['speedup'] = [0.0] * len(dataframe)
     for dataset_name in dataset_names:
         dataset_local = dataframe[(dataframe['dataset'] == dataset_name) & (dataframe['np'] == 1)]
-        mean_local_exec_time = dataset_local['exec_time'].mean()
+        min_local_exec_time = dataset_local['exec_time'].min()
         dataset_copy = dataframe[dataframe['dataset'] == dataset_name].copy()
-        dataset_copy['speedup'] = (dataset_copy['exec_time'] / mean_local_exec_time)**-1
+        dataset_copy['speedup'] = (dataset_copy['exec_time'] / min_local_exec_time)**-1
         dataframe[dataframe['dataset'] == dataset_name] = dataset_copy
 
     dataframe_wo_local = dataframe[dataframe['np'] != 1]
