@@ -33,7 +33,7 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von <a
 - <a href="results/" target="_blank">`results/`</a> - enthält die Resultate der Implementierungen
 - <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
 - <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
-- <a href="Doxyfile" target="_blank">`Doxyfile`</a> - enthält ausführliche Dokumentation des Codes
+- <a href="Doxyfile" target="_blank">`Doxyfile`</a> - verantwortlich für die automatische Generierung der Code-Dokumentation
 - <a href="Makefile" target="_blank">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
 - <a href="Project_Presentation.pdf" target="_blank">`Project_Presentation`</a> - grafische Aufbereitung der erzielten Ergebnisse
 - <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
