@@ -31,13 +31,13 @@ In diesem Projekt wird eine asynchrone Value Iteration unter Zuhilfenahme von <a
 - <a href="install_files/" target="_blank">`install_files/`</a> - enthält alle benötigten Debian-Dateien zum Installieren von <a href="https://www.open-mpi.org/" target="_blank">`OpenMPI`</a> [Version 2.2.1]
 - <a href="lib/" target="_blank">`lib/`</a> - enthält alle benötigten Lirbraries
 - <a href="results/" target="_blank">`results/`</a> - enthält die Resultate der Implementierungen
-- <a href="src/" target="_blank">`src/`</a> - enthält implementierte Skripte
+- <a href="src/" target="_blank">`src/`</a> - enthält den C++ Quellcode
 - <a href="CMakeLists.txt" target="_blank">`CMakeLists.txt`</a> - verantwortlich für Erstellen der `Makefile` zum Kompilieren
 - <a href="Doxyfile" target="_blank">`Doxyfile`</a> - verantwortlich für die automatische Generierung der Code-Dokumentation
 - <a href="Makefile" target="_blank">`Makefile`</a> - verantwortlich für alle Interaktion mit dem Projekt
 - <a href="Project_Presentation.pdf" target="_blank">`Project_Presentation`</a> - grafische Aufbereitung der erzielten Ergebnisse
 - <a href="hostfile" target="_blank">`hostfile`</a> - enthält alle Hosts auf denen das verteilte Rechnen laufen soll
-- <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptskript, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
+- <a href="main.cpp" target="_blank">`main.cpp`</a> - Hauptprogrammt, ruft Implementationen in <a href="src/" target="_blank">`src/`</a> auf und führt den Task aus
 
 ---
 
