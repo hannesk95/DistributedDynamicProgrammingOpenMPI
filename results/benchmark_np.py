@@ -58,22 +58,43 @@ def extend_database(folder, database):
 def main():
     parent_folder = sys.argv[1]
     child_folders = glob.glob(os.path.join(parent_folder, "*/"))
-    child_folders = [*child_folders[:4], *child_folders[8:], *child_folders[4:8]]
     database = []
     for child_folder in child_folders:
         database = extend_database(child_folder, database)
 
     dataframe = pd.DataFrame(database)
     dataframe['exec_time_us_log'] = np.log2(dataframe['exec_time'] * 1e9)
+    plt.figure()
     g = sns.catplot(
         data=dataframe, kind="bar",
         x="dataset", y="exec_time_us_log", hue="np",
-        palette="dark", alpha=.6, height=6
+        order=['data_debug','data_small','data_normal'],
+        palette="dark", alpha=.6, height=6,
+        legend_out=True
     )
-    g.despine(left=True)
     g.set_axis_labels("", "log2 of mean execution time (us)")
     g.legend.set_title("Number of processes")
+    g._legend.set_bbox_to_anchor((1.2, .7))
     g.savefig(os.path.join(parent_folder,"benchmark_np.png"))
+
+    dataset_names = dataframe['dataset'].unique()
+    dataframe['speedup'] = [0.0] * len(dataframe)
+    for dataset_name in dataset_names:
+        dataset_local = dataframe[(dataframe['dataset'] == dataset_name) & (dataframe['np'] == 1)]
+        min_local_exec_time = dataset_local['exec_time'].min()
+        dataset_copy = dataframe[dataframe['dataset'] == dataset_name].copy()
+        dataset_copy['speedup'] = (dataset_copy['exec_time'] / min_local_exec_time)**-1
+        dataframe[dataframe['dataset'] == dataset_name] = dataset_copy
+
+    dataframe_wo_local = dataframe[dataframe['np'] != 1]
+    plt.figure()
+    g = sns.lineplot(
+        x='np', y='speedup', hue='dataset', hue_order=['data_debug','data_small','data_normal'],
+        data=dataframe_wo_local
+    ).get_figure()
+    g.savefig(os.path.join(parent_folder,"benchmark_np_speedup.png"))
+
+        
     
     
 if __name__ == "__main__":
