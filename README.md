@@ -1,5 +1,4 @@
-# High Performance Computing für Maschinelle Intelligenz (C++ / Python)
-### Lehrstuhl für Datenverarbeitung | Wintersemester 2020 / 2021 | Gruppe 1
+## Distributed Dynamic-Programming using OpenMPI in C++
 
 ---
 
