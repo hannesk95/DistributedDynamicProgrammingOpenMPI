@@ -1,7 +1,7 @@
 ## Distributed Dynamic-Programming using OpenMPI in C++
-
 ---
 
+### Preface
 In this project, an asynchronous value iteration using OpenMPI is presented. Different strategies are implemented and benchmarked subsequently.
 
 ---
